@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Необходимые Мета-теги всегда на первом месте -->  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Bootstrap CSS -->  
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet">
+  </head>
+  <body style="padding: 20px 20%;">
+    <div class="row">
+	  <div class="col-md-4"><h1>RussianResaler</h1></div>
+	  <div class="col-md-4">
+		<form class="form-inline">
+			<div class="form-group">
+			    <input type="text" class="form-control" id="search" placeholder="Поиск">
+			</div>
+			  <button type="submit" class="btn btn-primary">Найти</button>
+		</form>
+	  </div>
+	  <div class="col-md-4">
+	  	<button type="button" class="btn btn-primary">Продать</button>
+	  	<button type="button" class="btn btn-success">Войти</button>
+	  </div>
+    </div>
+    <hr>
+    <div class="row category">
+	  <div class="col-md-4"><h5>МУЖСКОЕ</h5></div>
+	  <div class="col-md-4"><h5>ЖЕНСКОЕ</h5></div>
+	  <div class="col-md-4"><h5>БРЕНДЫ</h5></div>
+    </div>
+    <div class="row" style="margin-top: 30px;">
+	  <div class="col-md-3">
+	  	<label>Категория
+			<div class="form-check" style="margin-left: 20px;">
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="blankCheckbox1" value="option1">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Обувь</span>
+				</label>
+				<br>
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="blankCheckbox2" value="option2">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Верх</span>
+				</label>
+				<br>
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="blankCheckbox3" value="option3">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Низ</span>
+				</label>
+				<br>
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="blankCheckbox4" value="option4">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Аксессуары</span>
+				</label>
+				<br>
+			</div>
+		</label>
+		<label>Бренд<br>
+				<select class="custom-select">
+				  <option selected>Open this select menu</option>
+				  <option value="1">Supreme</option>
+				  <option value="2">Gucci</option>
+				  <option value="3">Palace</option>
+				</select>
+		</label>		  
+		<label>Размер<br>
+				<select class="custom-select">
+				  <option selected>Обувь</option>
+				  <option value="1">Supreme</option>
+				  <option value="2">Gucci</option>
+				  <option value="3">Palace</option>
+				</select>
+				<select class="custom-select">
+				  <option selected>Верх</option>
+				  <option value="1">Supreme</option>
+				  <option value="2">Gucci</option>
+				  <option value="3">Palace</option>
+				</select>
+				<select class="custom-select">
+				  <option selected>Низ</option>
+				  <option value="1">Supreme</option>
+				  <option value="2">Gucci</option>
+				  <option value="3">Palace</option>
+				</select>
+				<select class="custom-select">
+				  <option selected>Аксессуары</option>
+				  <option value="1">Supreme</option>
+				  <option value="2">Gucci</option>
+				  <option value="3">Palace</option>
+				</select>
+		</label>
+		    <div class="form-check" style="margin-left: 20px;">
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="exchange" value="exchange">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Обмен</span>
+				</label>
+			</div>
+		<label>Цена<br>
+	  	  <input type="number" name="startPrice" id="startPrice" class="form-control" placeholder="от">
+	  	  <input type="number" name="stopPrice" id="stopPrice" class="form-control" placeholder="до">
+	    </label>
+		<label>Состояние<br>
+		    <div class="form-check" style="margin-left: 20px;">
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="state1" value="state1">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Новая с биркой</span>
+				</label>
+				<br>
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="state2" value="state2">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Новая без бирки</span>
+				</label>
+				<br>
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="state3" value="state3">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Есть деффекты</span>
+				</label>
+				<br>
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="state4" value="state4">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Надевалась один раз</span>
+				</label>
+				<br>
+				<label class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="state5" value="state5">
+				  <span class="custom-control-indicator"></span>
+				  <span class="custom-control-description">Надевалась несколько раз</span>
+				</label>
+			</div>
+		</label>	
+	    <label>Место нахождения<br>
+	  	  <input type="text" name="country" id="country" class="form-control" placeholder="Страна">
+	  	  <input type="text" name="city" id="city" class="form-control" placeholder="Город">
+	    </label>
+	    <button type="button" class="btn btn-success">Показать</button>
+	  	<button type="button" class="btn btn-outline-secondary">Сбросить</button>
+	  </div>
+	  <div class="col-md-9">
+	  	<label><img class="lots" src="C:\Documents\Sublime\RussianResaler\lot.jpg" alt="Third lot"><br>Информация о лоте</label>
+	  	<label><img class="lots" src="C:\Documents\Sublime\RussianResaler\lot.jpg" alt="Third lot"><br>Информация о лоте</label>
+	  	<label><img class="lots" src="C:\Documents\Sublime\RussianResaler\lot.jpg" alt="Third lot"><br>Информация о лоте</label>
+	  	<label><img class="lots" src="C:\Documents\Sublime\RussianResaler\lot.jpg" alt="Third lot"><br>Информация о лоте</label>
+	  	<label><img class="lots" src="C:\Documents\Sublime\RussianResaler\lot.jpg" alt="Third lot"><br>Информация о лоте</label>
+	  </div>
+    </div>
+
+
+    <!-- jQuery первый, затем Tether, затем Bootstrap JS. -->  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
+  </body>
+</html>
