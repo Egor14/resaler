@@ -153,11 +153,36 @@
 	  </div>
 
 	  <div class="col-md-9">
+	  	<% catalog = JSON.parse(catalogJSON); %> 
 	  	<label><a href = "/buy"><img class="lots" src="https://raw.githubusercontent.com/Egor14/resaler/master/test_lot.jpg" alt="Third lot"></a><br>Информация о лоте</label>
+	  	<label><img class="lots" src=<%= catalog[0].url %> alt="Third lot"><br>Информация о лоте</label>
 	  	<label><img class="lots" src="https://raw.githubusercontent.com/Egor14/resaler/master/test_lot.jpg" alt="Third lot"><br>Информация о лоте</label>
 	  	<label><img class="lots" src="https://raw.githubusercontent.com/Egor14/resaler/master/test_lot.jpg" alt="Third lot"><br>Информация о лоте</label>
 	  	<label><img class="lots" src="https://raw.githubusercontent.com/Egor14/resaler/master/test_lot.jpg" alt="Third lot"><br>Информация о лоте</label>
-	  	<label><img class="lots" src="https://raw.githubusercontent.com/Egor14/resaler/master/test_lot.jpg" alt="Third lot"><br>Информация о лоте</label>
+	  	<% for (i=0; i<catalog.length; i++){ %>
+	  			<label><img class="lots" src=<%= catalog[i].url %> alt="Third lot"><br><%= catalog[i].name %></label>
+		<% } %>
+		<% for (i=0; i<catalog.length; i++){ %>
+	  			<label><img class="lots" src=<%= catalog[i].url %> alt="Third lot"><br><%= catalog[i].name %></label>
+		<% } %>
+		<% for (i=0; i<catalog.length; i++){ %>
+	  			<label><img class="lots" src=<%= catalog[i].url %> alt="Third lot"><br><%= catalog[i].name %></label>
+		<% } %>
+		<% for (i=0; i<catalog.length; i++){ %>
+	  			<label><img class="lots" src=<%= catalog[i].url %> alt="Third lot"><br><%= catalog[i].name %></label>
+		<% } %>
+		<% for (i=0; i<catalog.length; i++){ %>
+	  			<label><img class="lots" src=<%= catalog[i].url %> alt="Third lot"><br><%= catalog[i].name %></label>
+		<% } %>
+		<% for (i=0; i<catalog.length; i++){ %>
+	  			<label><img class="lots" src=<%= catalog[i].url %> alt="Third lot"><br><%= catalog[i].name %></label>
+		<% } %>
+		<% for (i=0; i<catalog.length; i++){ %>
+	  			<label><img class="lots" src=<%= catalog[i].url %> alt="Third lot"><br><%= catalog[i].name %></label>
+		<% } %>
+		<% for (i=0; i<catalog.length; i++){ %>
+	  			<label><img class="lots" src=<%= catalog[i].url %> alt="Third lot"><br><%= catalog[i].name %></label>
+		<% } %>
 	  </div>
     </div>
 
