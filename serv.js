@@ -1,6 +1,8 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require("body-parser");
+var fs = require("fs");
+var upload = require("express-fileupload");
 
 var app = express();
 
@@ -9,6 +11,8 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(upload());
 
 
 var lot_1 = {
@@ -51,7 +55,7 @@ app.get('/buy', function(req, res) {
 });
 
 app.get('/sell', function(req, res) {
-	res.sendFile(__dirname + '/new-offer.html');
+	res.sendFile(__dirname + '/new-offer.html', {});
 });
 
 app.post('/filter', urlencodedParser, function (req, res) {
@@ -59,6 +63,18 @@ app.post('/filter', urlencodedParser, function (req, res) {
 	res.redirect('/');
 })
 
+app.post('/place', urlencodedParser, function (req, res) {
+	console.log(typeof(req.body));
+	//fs.writeFileSync("image.png", req.body);
+  //var base64data = req.body.toString('base64');
+  // console.log('Image converted to base 64 is:\n\n' + req.body);  
+  // console.log(req.body.b64);
+  // console.log(req.body.basePhoto);
+  console.log(req.files.basePhoto.data);
+  fs.writeFileSync("image.png", req.files.basePhoto.data);
+
+	res.redirect('/');
+})
 
 
 
