@@ -12,3 +12,8 @@
 .lots:hover {
 	border: 1px solid blue;
 }
+
+.image {
+	width: 500px;
+	height: 400px;
+}

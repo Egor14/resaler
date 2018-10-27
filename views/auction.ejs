@@ -9,6 +9,22 @@
     <!-- Bootstrap CSS -->  
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
+    <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+    <script>
+
+      // Enable pusher logging - don't include this in production
+      Pusher.logToConsole = true;
+
+      var pusher = new Pusher('861cada503bdd961e815', {
+        cluster: 'eu',
+        forceTLS: true
+      });
+
+      var channel = pusher.subscribe('my-channel');
+      channel.bind('my-event', function(data) {
+        document.getElementById("price").innerHTML = Number(document.getElementById("price").innerHTML) + Number(data.message);
+      });
+    </script>
   </head>
   <body style="padding: 20px 20%;">
     <div class="row">
@@ -34,10 +50,53 @@
       <div class="col-md-4"><h5>ЖЕНСКОЕ</h5></div>
       <div class="col-md-4"><h5>БРЕНДЫ</h5></div>
     </div>
+
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-md-7">
+          <h2><%= shmot.name %></h2>
+          <br>
+          <img  src="<%= shmot.url %>"></h1>
+        </div>
+
+        <div class="col-md-5">
+
+          <div id="Price">
+            Price:
+            <span id="price">  <%= shmot.price  %> </span>
+            $
+          </div> 
+
+
+          <div id="Timer">
+            Time left: 
+            <span id="time"><%= shmot.time  %></span>
+          </div> 
+
+
+          <form action="/update/<%= shmot.lotID  %>" method="post">
+              <input type="hidden" id="Price" name="Price" value="5">
+              <input type="submit" name="bt"  id="btnRaise" class="btn btn-success" value="Raise 5$">
+          </form> 
+  
+
+          <form action="/update/<%= shmot.lotID  %>" method="post" class="form-inline">
+            <div class="form-group">
+              <label for="inputPassword6"> Your offer </label>
+              <input type="number" name="Price" id="inputPassword6" class="form-control" placeholder="Enter your offer">
+              <small id="passwordHelpInline" class="text-muted">
+                 $ <br>
+              </small>
+              <input type="submit" name="bt2"  id="btnYourRaise" class="btn btn-primary" value="Raise 2">
+            </div>
+          </form>
+
+        </div>
+    </div>
+
+
     
 
-    <%= value %>
-
+    <script src="timer.js"></script>
 
     <!-- jQuery первый, затем Tether, затем Bootstrap JS. -->  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
