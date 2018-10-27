@@ -43,15 +43,12 @@ var catalog = [lot_1, lot_2, lot_3];
 
 var catalogJSON = JSON.stringify(catalog);
 
-console.log(catalog);
-
-
 app.get('/', function(req, res) {
 	res.render('index', {catalogJSON : catalogJSON});
 });
 
-app.get('/buy', function(req, res) {
-	res.sendFile(__dirname + '/auction.html');
+app.get('/buy/:id', function(req, res) {
+	res.render('auction', {value : req.params.id});
 });
 
 app.get('/sell', function(req, res) {
@@ -64,18 +61,16 @@ app.post('/filter', urlencodedParser, function (req, res) {
 })
 
 app.post('/place', urlencodedParser, function (req, res) {
-	console.log(typeof(req.body));
-	//fs.writeFileSync("image.png", req.body);
-  //var base64data = req.body.toString('base64');
-  // console.log('Image converted to base 64 is:\n\n' + req.body);  
-  // console.log(req.body.b64);
-  // console.log(req.body.basePhoto);
-  console.log(req.files.basePhoto.data);
-  fs.writeFileSync("image.png", req.files.basePhoto.data);
-
+  var imageID = String(catalog.length + 1);
+  fs.writeFileSync("public/image" + imageID + ".png", req.files.basePhoto.data);
+  var lot = {
+    name: req.body.description,
+    url: "/image" + imageID + ".png" 
+  };
+  catalog.push(lot);
+  catalogJSON = JSON.stringify(catalog);
 	res.redirect('/');
 })
-
 
 
 app.listen(3000);
