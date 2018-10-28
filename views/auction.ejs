@@ -61,32 +61,30 @@
         <div class="col-md-5">
 
           <div id="Price">
-            Price:
-            <span id="price">  <%= shmot.price  %> </span>
-            $
+            <h3>
+              Последняя ставка:
+              <span id="price">  <%= shmot.price  %> </span>
+              руб
+          </h3>
           </div> 
 
 
           <div id="Timer">
-            Time left: 
-            <span id="time"><%= shmot.time  %></span>
+            <h3>
+              Осталось времени: 
+              <span id="time"><%= shmot.time  %></span>
+            </h3>
           </div> 
-
-
-          <form action="/update/<%= shmot.lotID  %>" method="post">
-              <input type="hidden" id="Price" name="Price" value="5">
-              <input type="submit" name="bt"  id="btnRaise" class="btn btn-success" value="Raise 5$">
-          </form> 
   
 
           <form action="/update/<%= shmot.lotID  %>" method="post" class="form-inline">
             <div class="form-group">
-              <label for="inputPassword6"> Your offer </label>
-              <input type="number" name="Price" id="inputPassword6" class="form-control" placeholder="Enter your offer">
-              <small id="passwordHelpInline" class="text-muted">
-                 $ <br>
-              </small>
-              <input type="submit" name="bt2"  id="btnYourRaise" class="btn btn-primary" value="Raise 2">
+              <h5>
+                <label for="inputPassword6"> Поднять на </label>
+                <input type="number" name="Price" id="inputPassword6" class="form-control" placeholder="сумма" style="width: 100px;">
+                   руб <br>
+              </h5>
+              <input type="submit" name="bt2"  id="btnYourRaise" class="btn btn-primary" value="Поднять">
             </div>
           </form>
 

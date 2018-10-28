@@ -1,4 +1,3 @@
-var btn = document.getElementById("btnRaise");
 var btn2 = document.getElementById("btnYourRaise");
 
 startTimer();
