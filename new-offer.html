@@ -39,6 +39,143 @@
       <input type="file" name="basePhoto" id="basePhoto" accept=".png,.jpg,.jpeg">
       <label for="description">Описание</label>
       <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+      <br>
+
+      <label class="custom-control custom-radio">
+        <input id="male" name="sex" type="radio" class="custom-control-input" value="0">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Мужское</span>
+      </label>
+      <label class="custom-control custom-radio">
+        <input id="female" name="sex" type="radio" class="custom-control-input" value="1">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Женское</span>
+      </label>
+
+      <br>
+
+      <label>Категория<br>
+        <label class="custom-control custom-radio">
+        <input id="bootsSell" name="category" type="radio" class="custom-control-input" value="0">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Одежда</span>
+      </label>
+      <br>
+      <label class="custom-control custom-radio">
+        <input id="topSell" name="category" type="radio" class="custom-control-input" value="1">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Верх</span>
+      </label>
+      <br>
+      <label class="custom-control custom-radio">
+        <input id="bottomSell" name="category" type="radio" class="custom-control-input" value="2">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Низ</span>
+      </label>
+      <br>
+      <label class="custom-control custom-radio">
+        <input id="otherSell" name="category" type="radio" class="custom-control-input" value="3">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Женское</span>
+      </label>
+      </label>
+
+      <br>
+      <div class="form-group">
+          <input type="text" class="form-control" name="brand" id="search" placeholder="Бренд">
+      </div>
+      <br>
+
+      <div class="form-check" style="margin-left: 20px;">
+          <label class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="exchange" value="exchange">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Обмен</span>
+          </label>
+        </div>
+
+      <label>Стартовая цена<br>
+        <input type="number" name="startPriceSell" id="startPriceSell" class="form-control" placeholder="от">
+      </label>
+
+      <br>
+
+      <label>Место нахождения<br>
+          <input type="text" name="country" id="country" class="form-control" placeholder="Страна">
+          <input type="text" name="city" id="city" class="form-control" placeholder="Город">
+        </label>
+
+        <br>
+
+
+        <label>Время аукциона<br>
+          <input type="text" name="time" id="time" class="form-control" placeholder="xx:xx">
+        </label>
+
+      <br>
+
+      <label>Размер<br>
+          <select name="bootsSize" class="custom-select">
+            <option selected>Обувь</option>
+            <option value="1">Supreme</option>
+            <option value="2">Gucci</option>
+            <option value="3">Palace</option>
+          </select>
+          <select name="topSize" class="custom-select">
+            <option selected>Верх</option>
+            <option value="1">Supreme</option>
+            <option value="2">Gucci</option>
+            <option value="3">Palace</option>
+          </select>
+          <select name="bottomSize" class="custom-select">
+            <option selected>Низ</option>
+            <option value="1">Supreme</option>
+            <option value="2">Gucci</option>
+            <option value="3">Palace</option>
+          </select>
+          <select name="otherSize" class="custom-select">
+            <option selected>Аксессуары</option>
+            <option value="1">Supreme</option>
+            <option value="2">Gucci</option>
+            <option value="3">Palace</option>
+          </select>
+      </label>
+
+      <br>
+
+      <label>Состояние<br>
+          <div class="form-check" style="margin-left: 20px;">
+          <label class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" name="state1" value="1">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Новая с биркой</span>
+          </label>
+          <br>
+          <label class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" name="state2" value="2">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Новая без бирки</span>
+          </label>
+          <br>
+          <label class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" name="state3" value="3">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Есть деффекты</span>
+          </label>
+          <br>
+          <label class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" name="state4" value="4">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Надевалась один раз</span>
+          </label>
+          <br>
+          <label class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" name="state5" value="5">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Надевалась несколько раз</span>
+          </label>
+        </div>
+      </label>
 
       <br>
       <br>

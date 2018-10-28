@@ -17,3 +17,25 @@
 	width: 500px;
 	height: 400px;
 }
+
+body {
+  padding: 0px;
+}
+
+@include media-breakpoint-up(sm) {
+  body {
+    padding: 0px;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  body {
+    padding: 0px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  body {
+    padding: 20px 20%;
+  }
+}

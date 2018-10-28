@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
   </head>
-  <body style="padding: 20px 20%;">
+  <body style="padding: 20px 20%">
     <div class="row">
 	  <div class="col-md-4"><h1>RussianResaler</h1></div>
 	  <div class="col-md-4">
@@ -35,7 +35,7 @@
 	  <div class="col-md-4"><h5>БРЕНДЫ</h5></div>
     </div>
     <div class="row" style="margin-top: 30px;">
-	  <div class="col-md-3">
+	  <div class="col-lg-3 col-md-4 col-xs-12 col-12">
 	  	<form action="/filter" method="post">
 		  	<label>Категория
 				<div class="form-check" style="margin-left: 20px;">
@@ -152,14 +152,16 @@
 	    </form>
 	  </div>
 
-	  <div class="col-md-9">
+	  <!-- <div class="col-md-9"> -->
 	  	<% catalog = JSON.parse(catalogJSON); %> 
-
+        
 	  	<% for (i=0; i<catalog.length; i++){ %>
+	  	<div class="col-lg-3 col-md-4 col-xs-6 col-6">
 	  			<label><a href="/<%=i%>"><img class="lots" src=<%= catalog[i].url %> alt="Third lot"></a><br><%= catalog[i].name %></label>
+	  	</div>
 		<% } %>
 		
-	  </div>
+	  <!-- </div> -->
     </div>
 
 

@@ -54,7 +54,7 @@ var begin = [true, true, true];
 var catalogJSON = JSON.stringify(catalog);
 
 app.get('/', function(req, res) {
-	res.render('index', {catalogJSON : catalogJSON});
+	res.render('index', {catalogJSON : catalogJSON, shmot : catalog[0]});
 });
 
 app.get('/buy', function(req, res) {
@@ -76,9 +76,14 @@ app.post('/place', urlencodedParser, function (req, res) {
   fs.writeFileSync("public/image" + imageID + ".png", req.files.basePhoto.data);
   var lot = {
     name: req.body.description,
-    url: "/image" + imageID + ".png" 
+    url: "/image" + imageID + ".png", 
+    price: Number(req.body.startPriceSell),
+    time: req.body.time,
+    lotID: catalog.length
   };
+  console.log(req.body);
   catalog.push(lot);
+  begin.push(true);
   catalogJSON = JSON.stringify(catalog);
 	res.redirect('/');
 })
