@@ -54,11 +54,7 @@ var begin = [true, true, true];
 var catalogJSON = JSON.stringify(catalog);
 
 app.get('/', function(req, res) {
-	res.render('index', {catalogJSON : catalogJSON, shmot : catalog[0]});
-});
-
-app.get('/buy', function(req, res) {
-	res.render('auction', {value : req.params.id});
+	res.render('index', {catalogJSON : catalogJSON});
 });
 
 

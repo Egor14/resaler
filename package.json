@@ -1,0 +1,29 @@
+{
+  "name": "resaler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "serv.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Egor14/resaler.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Egor14/resaler/issues"
+  },
+  "homepage": "https://github.com/Egor14/resaler#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-fileupload": "^1.0.0",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "pg": "^7.6.1",
+    "pusher": "^2.1.3"
+  }
+}
