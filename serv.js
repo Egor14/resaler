@@ -4,6 +4,7 @@ var path = require('path');
 var bodyParser = require("body-parser");
 var fs = require("fs");
 var upload = require("express-fileupload");
+const pg  = require('pg');
 
 var pusher = new Pusher({
   appId: '616886',
@@ -14,6 +15,15 @@ var pusher = new Pusher({
 });
 
 var app = express();
+
+const config = {
+    user: 'postgres',
+    database: 'resalerDB',
+    password: '178gz90Gruny19',
+    port: 5432
+};
+
+const pool = new pg.Pool(config);
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -48,13 +58,31 @@ var lot_3 = {
   time: "00:50"
 };
 
-var catalog = [lot_1, lot_2, lot_3];
+//var catalog = [lot_1, lot_2, lot_3];
 var begin = [true, true, true];
 
-var catalogJSON = JSON.stringify(catalog);
+//var catalogJSON = JSON.stringify(catalog);
 
 app.get('/', function(req, res) {
-	res.render('index', {catalogJSON : catalogJSON});
+  pool.connect(function (err, client, done) {
+       if (err) {
+           console.log("Can not connect to the DB" + err);
+       }
+       client.query('SELECT * from lots', function (err, result) {
+            done();
+            if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+            var catalog = result.rows;
+            for (i = 0; i < catalog.length; i++) {
+              catalog[i].url = 'https://raw.githubusercontent.com/Egor14/web/master/yeezy_zebra.png'
+            }
+            var catalogJSON = JSON.stringify(catalog);
+            console.log(result.rows);
+            res.render('index', {catalogJSON : catalogJSON});
+       })
+   })
 });
 
 
@@ -81,7 +109,22 @@ app.post('/place', urlencodedParser, function (req, res) {
   catalog.push(lot);
   begin.push(true);
   catalogJSON = JSON.stringify(catalog);
-	res.redirect('/');
+
+
+  mass = [4, 1556, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state, 0];
+  pool.connect(function (err, client, done) {
+       if (err) {
+           console.log("Can not connect to the DB" + err);
+       }
+       client.query('INSERT INTO lots(lot_id, user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition, bets_bet_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);', mass, function (err, result) {
+      done()
+            if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+            res.redirect('/');
+       })
+   })
 })
 
 app.post('/update/:id', urlencodedParser, function (req, res) {

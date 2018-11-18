@@ -4,7 +4,7 @@ const app       = express();
 
 const config = {
     user: 'postgres',
-    database: 'test',
+    database: 'resalerDB',
     password: '178gz90Gruny19',
     port: 5432
 };
@@ -17,25 +17,29 @@ app.get('/', (req, res, next) => {
        if (err) {
            console.log("Can not connect to the DB" + err);
        }
-       client.query('SELECT * FROM students', function (err, result) {
+       client.query('SELECT * from users', function (err, result) {
             done();
             if (err) {
                 console.log(err);
                 res.status(400).send(err);
             }
+            console.log(result.rows);
             res.send(result.rows);
        })
    })
+   //console.log(name)
 });
 
-var k = 0
 
-app.get('/:id', (req, res, next) => {
+var k = 20
+
+app.get('/add', (req, res, next) => {
+  var mass = [54, 'Stas', 'HZ', 'dasdasda']
    pool.connect(function (err, client, done) {
        if (err) {
            console.log("Can not connect to the DB" + err);
        }
-       client.query('INSERT INTO students (s_id, name, start_year) VALUES ($1, $2, $3);', [k, req.params.id, 2017], function (err, result) {
+       client.query('INSERT INTO users (user_id, name, login, link) VALUES ($1, $2, $3, $4);', mass, function (err, result) {
       done()
             if (err) {
                 console.log(err);
