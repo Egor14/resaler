@@ -156,7 +156,7 @@
 	  	<% catalog = JSON.parse(catalogJSON); %> 
         
 	  	<% for (i=0; i<catalog.length; i++){ %>
-	  			<label><a href="/<%=i%>"><img class="lots" src = <%= catalog[i].img_name %>  alt="Third lot"></a><br><%= catalog[i].comment %></label>
+	  			<label><a href="/<%=i%>"><img class="lots" src = <%= 'image' + catalog[i].img_id + '.jpg' %>  alt="Third lot"></a><br><%= catalog[i].comment %></label>
 		<% } %>
 		
 	  </div>

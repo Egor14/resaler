@@ -21,6 +21,11 @@
 body {
   padding: 0px;
 }
+.carousel-control-next {
+  margin-left : 200px;
+  color: black;
+  background-color: black;
+}
 
 @include media-breakpoint-up(sm) {
   body {

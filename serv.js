@@ -18,7 +18,7 @@ var app = express();
 
 const config = {
     user: 'postgres',
-    database: 'resalerDB',
+    database: 'resaler_DB',
     password: '178gz90Gruny19',
     port: 5432
 };
@@ -34,41 +34,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(upload());
 
 
-var lot_1 = {
-  name: "YEEZY BOOST 350 V2 'ZEBRA'",
-  url: 'https://raw.githubusercontent.com/Egor14/web/master/yeezy_zebra.png',
-  price : 200,
-  lotID: 0,
-  time: "00:50"
-};
-
-var lot_2 = {
-  name: "NIKE AIR JORDAN",
-  url: 'https://raw.githubusercontent.com/Egor14/web/master/jordan.png',
-  price : 100,
-  lotID: 1,
-  time: "00:50"
-};
-
-var lot_3 = {
-  name: "NIKE AIR MAX",
-  url: 'https://raw.githubusercontent.com/Egor14/web/master/air.png',
-  price : 70,
-  lotID: 2,
-  time: "00:50"
-};
-
-//var catalog = [lot_1, lot_2, lot_3];
 var begin = [true, true, true, true, true];
 
-//var catalogJSON = JSON.stringify(catalog);
 
 app.get('/', function(req, res) {
   pool.connect(function (err, client, done) {
        if (err) {
            console.log("Can not connect to the DB" + err);
        }
-       client.query('select * from lots, images where lots.lot_id = images.lot_id;', function (err, result) {
+       client.query('select * from lots, images where lots.lot_id = images.lot_id and images.ismain = true;', function (err, result) {
             done();
             if (err) {
                 console.log(err);
@@ -149,11 +123,24 @@ app.post('/update/:id', urlencodedParser, function (req, res) {
 })
 
 app.get('/:id', function(req, res) {
-  if (begin[req.params.id] == true) {
+  if (begin[Number(req.params.id)] == true) {
     startTimer(req.params.id);
     begin[req.params.id] = false;
   }
-  res.render('auction', {shmot : catalog[req.params.id]});
+
+  pool.connect(function (err, client, done) {
+       if (err) {
+           console.log("Can not connect to the DB" + err);
+       }
+       client.query('select * from lots, images where lots.lot_id = images.lot_id and lots.lot_id = $1;', [Number(req.params.id)], function (err, result) {
+      done()
+            if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+            res.render('auction', {shmot : result.rows});
+       })
+   })
 });
 
 function startTimer(option){
