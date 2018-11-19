@@ -59,7 +59,7 @@ var lot_3 = {
 };
 
 //var catalog = [lot_1, lot_2, lot_3];
-var begin = [true, true, true];
+var begin = [true, true, true, true, true];
 
 //var catalogJSON = JSON.stringify(catalog);
 
@@ -68,18 +68,18 @@ app.get('/', function(req, res) {
        if (err) {
            console.log("Can not connect to the DB" + err);
        }
-       client.query('SELECT * from lots', function (err, result) {
+       client.query('select * from lots, images where lots.lot_id = images.lot_id;', function (err, result) {
             done();
             if (err) {
                 console.log(err);
                 res.status(400).send(err);
             }
             var catalog = result.rows;
-            for (i = 0; i < catalog.length; i++) {
+            /*for (i = 0; i < catalog.length; i++) {
               catalog[i].url = 'https://raw.githubusercontent.com/Egor14/web/master/yeezy_zebra.png'
-            }
+            }*/
             var catalogJSON = JSON.stringify(catalog);
-            console.log(result.rows);
+            //console.log(result.rows);
             res.render('index', {catalogJSON : catalogJSON});
        })
    })
@@ -132,7 +132,20 @@ app.post('/update/:id', urlencodedParser, function (req, res) {
   "message": req.body.Price
   });
   catalog[req.params.id].price += Number(req.body.Price);
-  res.redirect('/' + req.params.id);
+
+  pool.connect(function (err, client, done) {
+       if (err) {
+           console.log("Can not connect to the DB" + err);
+       }
+       client.query('update lots set price = $1 where lot_id = $2;', [catalog[req.params.id].price, catalog[req.params.id].lot_id], function (err, result) {
+      done()
+            if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+            res.redirect('/' + req.params.id);
+       })
+   })
 })
 
 app.get('/:id', function(req, res) {
