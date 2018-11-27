@@ -70,9 +70,28 @@ app.post('/filter', urlencodedParser, function (req, res) {
 })
 
 app.post('/place', urlencodedParser, function (req, res) {
-  var imageID = String(catalog.length + 1);
-  fs.writeFileSync("public/image" + imageID + ".png", req.files.basePhoto.data);
-  var lot = {
+  //var imageID = String(catalog.length + 1);
+  //fs.writeFileSync("public/image" + imageID + ".png", req.files.basePhoto.data);
+
+  console.log(req.files.basePhoto.data);
+  //res.redirect('/');
+
+  pool.connect(function (err, client, done) {
+       client.query('select count(images.img_id) from images;', function (err, result) {
+            fs.writeFileSync("public/image" + result.rows[0].count + ".jpg", req.files.basePhoto.data);
+            client.query('INSERT INTO lots(user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', 
+                      [1, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state], 
+                          function (err, result) {
+                client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2);', [7, true], function (err, result) {
+              done()
+                res.redirect('/');
+              })
+          })
+       })
+   })
+
+  //select count(images.img_id) from images;
+  /*var lot = {
     name: req.body.description,
     url: "/image" + imageID + ".png", 
     price: Number(req.body.startPriceSell),
@@ -80,17 +99,19 @@ app.post('/place', urlencodedParser, function (req, res) {
     lotID: catalog.length
   };
   console.log(req.body);
-  catalog.push(lot);
-  begin.push(true);
-  catalogJSON = JSON.stringify(catalog);
+  catalog.push(lot);*/
 
 
-  mass = [4, 1556, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state, 0];
+  //begin.push(true);
+  //catalogJSON = JSON.stringify(catalog);
+
+
+  /*mass = [1, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state];
   pool.connect(function (err, client, done) {
        if (err) {
            console.log("Can not connect to the DB" + err);
        }
-       client.query('INSERT INTO lots(lot_id, user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition, bets_bet_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);', mass, function (err, result) {
+       client.query('INSERT INTO lots(user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', mass, function (err, result) {
       done()
             if (err) {
                 console.log(err);
@@ -98,25 +119,18 @@ app.post('/place', urlencodedParser, function (req, res) {
             }
             res.redirect('/');
        })
-   })
+   })*/
 })
 
 app.post('/update/:id', urlencodedParser, function (req, res) {
   pusher.trigger('my-channel', 'my-event', {
   "message": req.body.Price
   });
-  catalog[req.params.id].price += Number(req.body.Price);
+  //catalog[req.params.id].price += Number(req.body.Price);
 
   pool.connect(function (err, client, done) {
-       if (err) {
-           console.log("Can not connect to the DB" + err);
-       }
-       client.query('update lots set price = $1 where lot_id = $2;', [catalog[req.params.id].price, catalog[req.params.id].lot_id], function (err, result) {
+       client.query('update lots set price = price + $1 where lot_id = $2;', [Number(req.body.Price), Number(req.params.id)], function (err, result) {
       done()
-            if (err) {
-                console.log(err);
-                res.status(400).send(err);
-            }
             res.redirect('/' + req.params.id);
        })
    })
