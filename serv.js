@@ -30,6 +30,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/films/:option/',express.static(__dirname + '/public'));
 
 app.use(upload());
 
@@ -49,11 +50,7 @@ app.get('/', function(req, res) {
                 res.status(400).send(err);
             }
             var catalog = result.rows;
-            /*for (i = 0; i < catalog.length; i++) {
-              catalog[i].url = 'https://raw.githubusercontent.com/Egor14/web/master/yeezy_zebra.png'
-            }*/
             var catalogJSON = JSON.stringify(catalog);
-            //console.log(result.rows);
             res.render('index', {catalogJSON : catalogJSON});
        })
    })
@@ -70,63 +67,110 @@ app.post('/filter', urlencodedParser, function (req, res) {
 })
 
 app.post('/place', urlencodedParser, function (req, res) {
-  //var imageID = String(catalog.length + 1);
-  //fs.writeFileSync("public/image" + imageID + ".png", req.files.basePhoto.data);
 
-  console.log(req.files.basePhoto.data);
-  //res.redirect('/');
 
-  pool.connect(function (err, client, done) {
-       client.query('select count(images.img_id) from images;', function (err, result) {
-            fs.writeFileSync("public/image" + result.rows[0].count + ".jpg", req.files.basePhoto.data);
-            client.query('INSERT INTO lots(user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', 
-                      [1, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state], 
+  /*fs.writeFileSync("public/image" + 15 + ".jpg", req.files.basePhoto[0].data);
+  fs.writeFileSync("public/image" + 16 + ".jpg", req.files.basePhoto[1].data);
+  fs.writeFileSync("public/image" + 17 + ".jpg", req.files.basePhoto[2].data);
+
+  console.log(req.files.basePhoto[0].data);
+  console.log(req.files.basePhoto[1].data);
+  console.log(req.files.basePhoto[2].data);
+
+
+  main = true
+
+  res.redirect('/');*/
+
+  var main = true;
+  var max = 0;
+  var number = 0;
+
+  /*pool.connect(function (err, client, done) {
+       client.query('select max(images.img_id) from images;', function (err, result) {
+            max = Number(result.rows[0].max + 1);
+            client.query('INSERT INTO lots(lot_id, user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', 
+                      [max, 1, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state], 
                           function (err, result) {
-                client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2);', [7, true], function (err, result) {
+                            //console.log(main);
+                //for (i = 0; i<req.files.basePhoto.length; i++) {
+                //  if (i>0) {main = false;}
+                  client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2), ($3, $4), ($5, $6);', [max, main, max, false, max, false], function(err, result) {
+                       fs.writeFileSync("public/image" + Number(max) + ".jpg", req.files.basePhoto[0].data);
+                       fs.writeFileSync("public/image" + Number(max + 1)+ ".jpg", req.files.basePhoto[1].data);
+                       fs.writeFileSync("public/image" + Number(max + 2) + ".jpg", req.files.basePhoto[2].data);
+                       done();
+                       //res.redirect('/');
+                  })
+                  //res.redirect('/');
+                  //main = false;
+                  //client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2);', [max, main]);
+                  //client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2);', [max, main]);
+                  //number = max + i;
+                  //fs.writeFileSync("public/image" + 12 + ".jpg", req.files.basePhoto[i].data);
+                  //fs.writeFileSync("public/image" + 13 + ".jpg", req.files.basePhoto[i].data);
+                  //fs.writeFileSync("public/image" + 14 + ".jpg", req.files.basePhoto[i].data);
+                //}
+                //done()
+                //res.redirect('/');
+          })
+       })
+   })*/
+
+   /*pool.connect(function (err, client, done) {
+       client.query('select max(images.img_id) from images;', function (err, result) {
+            var max = Number(result.rows[0].max + 1);
+            fs.writeFileSync("public/image" + max + ".jpg", req.files.basePhoto[0].data);
+            fs.writeFileSync("public/image" + Number(max + 1) + ".jpg", req.files.basePhoto[1].data);
+            fs.writeFileSync("public/image" + Number(max + 2) + ".jpg", req.files.basePhoto[2].data);
+            client.query('INSERT INTO lots(lot_id, user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', 
+                      [max, 1, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state], 
+                          function (err, result) {
+                client.query('INSERT INTO images(lot_id, ismain) VALUES ($1, $2), ($3, $4), ($5, $6);', [max, true, max+1, false, max+2, false], function (err, result) {
               done()
                 res.redirect('/');
               })
           })
        })
-   })
-
-  //select count(images.img_id) from images;
-  /*var lot = {
-    name: req.body.description,
-    url: "/image" + imageID + ".png", 
-    price: Number(req.body.startPriceSell),
-    time: req.body.time,
-    lotID: catalog.length
-  };
-  console.log(req.body);
-  catalog.push(lot);*/
-
-
-  //begin.push(true);
-  //catalogJSON = JSON.stringify(catalog);
-
-
-  /*mass = [1, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state];
-  pool.connect(function (err, client, done) {
-       if (err) {
-           console.log("Can not connect to the DB" + err);
-       }
-       client.query('INSERT INTO lots(user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', mass, function (err, result) {
-      done()
-            if (err) {
-                console.log(err);
-                res.status(400).send(err);
-            }
-            res.redirect('/');
-       })
    })*/
+
+
+
+   pool.connect(function (err, client, done) {
+    client.query('select max(lots.lot_id) from lots;', function (err, result) {
+      counter = result.rows[0].max + 1;
+       client.query('select max(images.img_id) from images;', function (err, result) {
+            max = result.rows[0].max + 1;
+            for (i=0; i<req.files.basePhoto.length; i++){
+               fs.writeFileSync("public/image" + Number(max + i) + ".jpg", req.files.basePhoto[i].data);
+            }
+            //fs.writeFileSync("public/image" + Number(max) + ".jpg", req.files.basePhoto[0].data);
+            //fs.writeFileSync("public/image" + Number(max + 1) + ".jpg", req.files.basePhoto[1].data);
+            //fs.writeFileSync("public/image" + Number(max + 2) + ".jpg", req.files.basePhoto[2].data);
+            client.query('INSERT INTO lots(user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', 
+                      [1, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), true, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state], 
+                          function (err, result) {
+                            console.log(max);
+                for (i=0; i<req.files.basePhoto.length; i++){
+                  if (i>0) main = false;
+                   client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2);', [counter, main], function (err, result) {
+              })
+               }
+               done()
+                  res.redirect('/');
+          })
+       })
+   })
+  })
+
+
+
 })
 
 app.post('/update/:id', urlencodedParser, function (req, res) {
   pusher.trigger('my-channel', 'my-event', {
   "message": req.body.Price
   });
-  //catalog[req.params.id].price += Number(req.body.Price);
 
   pool.connect(function (err, client, done) {
        client.query('update lots set price = price + $1 where lot_id = $2;', [Number(req.body.Price), Number(req.params.id)], function (err, result) {
@@ -141,17 +185,10 @@ app.get('/:id', function(req, res) {
     startTimer(req.params.id);
     begin[req.params.id] = false;
   }
-
+  console.log(req.params.id);
   pool.connect(function (err, client, done) {
-       if (err) {
-           console.log("Can not connect to the DB" + err);
-       }
        client.query('select * from lots, images where lots.lot_id = images.lot_id and lots.lot_id = $1;', [Number(req.params.id)], function (err, result) {
       done()
-            if (err) {
-                console.log(err);
-                res.status(400).send(err);
-            }
             res.render('auction', {shmot : result.rows});
        })
    })
