@@ -30,7 +30,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/films/:option/',express.static(__dirname + '/public'));
+app.use('/auction/:id/',express.static(__dirname + '/public'));
 
 app.use(upload());
 
@@ -175,12 +175,12 @@ app.post('/update/:id', urlencodedParser, function (req, res) {
   pool.connect(function (err, client, done) {
        client.query('update lots set price = price + $1 where lot_id = $2;', [Number(req.body.Price), Number(req.params.id)], function (err, result) {
       done()
-            res.redirect('/' + req.params.id);
+            res.redirect('/auction/' + req.params.id);
        })
    })
 })
 
-app.get('/:id', function(req, res) {
+app.get('/auction/:id', function(req, res) {
   if (begin[Number(req.params.id)] == true) {
     startTimer(req.params.id);
     begin[req.params.id] = false;
