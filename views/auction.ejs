@@ -26,7 +26,7 @@
       });
     </script>
   </head>
-  <body style="padding: 20px 20%;">
+  <body style="padding: 20px 18%;">
     <div class="row">
       <div class="col-md-4"><h1>RussianResaler</h1></div>
       <div class="col-md-4">
@@ -116,8 +116,66 @@
           </form>
 
         </div>
+
     </div>
 
+    <div>
+          <h2>Описание</h2>
+
+          <% if (shmot[0].gender) { %>
+              Женское
+          <% } %>
+
+          <% if (shmot[0].gender == false) { %>
+              Мужское
+          <% } %>
+
+          <br>
+          <br>
+
+          Бренд: <%= shmot[0].brand %>
+
+          <br>
+          <br>
+
+          Категория: <%= shmot[0].category %>
+
+          <br>
+          <br>
+
+          Город: <%= shmot[0].country + ", " + shmot[0].city  %>
+
+          <br>
+          <br>
+
+          Обмен: 
+
+          <% if (shmot[0].swap) { %>
+              Да
+          <% } %>
+
+          <% if (shmot[0].swap == false) { %>
+              Нет
+          <% } %>
+
+          <br>
+          <br>
+
+          Размер: <%= shmot[0].size %>
+
+          <br>
+          <br>
+
+          Состояние: <%= shmot[0].condition %>
+
+          <br>
+          <br>
+
+          Комментарий: 
+          <br>
+          <%= shmot[0].comment %>
+
+     </div>
 
     
 
