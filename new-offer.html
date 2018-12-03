@@ -15,7 +15,7 @@
       <div class="col-md-4"><h1>RussianResaler</h1></div>
       <div class="col-md-4">
       <form class="form-inline">
-        <div class="form-group">
+        <div class="form-group" style="width: 150px">
             <input type="text" class="form-control" id="search" placeholder="Поиск">
         </div>
           <button type="submit" class="btn btn-link"><img src="https://raw.githubusercontent.com/Egor14/resaler/master/public/search.png" style="width: 30px; height: 30px;"></button>
@@ -36,7 +36,9 @@
     </div>
     <h1>Продажа</h1>
     <form action="/place" enctype="multipart/form-data" method="post">
-      <input type="file" name="basePhoto" id="basePhoto" accept=".png,.jpg,.jpeg" multiple>
+      <input type="file" name="basePhoto" id="basePhoto" accept=".png,.jpg,.jpeg" multiple required>
+      <br>
+      <br>
       <label for="description">Описание</label>
       <textarea class="form-control" id="description" name="description" rows="3"></textarea>
       <br>
@@ -82,7 +84,7 @@
 
       <br>
       <div class="form-group">
-          <input type="text" class="form-control" name="brand" id="search" placeholder="Бренд">
+          <input type="text" class="form-control" name="brand" id="search" placeholder="Бренд" required>
       </div>
       <br>
 
@@ -95,27 +97,27 @@
         </div>
 
       <label>Стартовая цена<br>
-        <input type="number" name="startPriceSell" id="startPriceSell" class="form-control" placeholder="от">
+        <input type="number" name="startPriceSell" id="startPriceSell" class="form-control" placeholder="от" required>
       </label>
 
       <br>
 
       <label>Место нахождения<br>
-          <input type="text" name="country" id="country" class="form-control" placeholder="Страна">
-          <input type="text" name="city" id="city" class="form-control" placeholder="Город">
+          <input type="text" name="country" id="country" class="form-control" placeholder="Страна" required>
+          <input type="text" name="city" id="city" class="form-control" placeholder="Город" required>
         </label>
 
         <br>
 
 
         <label>Время аукциона<br>
-          <input type="text" name="time" id="time" class="form-control" placeholder="xx:xx">
+          <input type="text" name="time" id="time" class="form-control" placeholder="xx:xx" required>
         </label>
 
       <br>
 
       <label>Размер<br>
-          <select name="bootsSize" class="custom-select">
+          <select name="bootsSize" class="custom-select" required>
             <option selected>Обувь</option>
             <option value="41 EU">41 EU</option>
             <option value="42 EU">42 EU</option>

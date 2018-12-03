@@ -5,6 +5,7 @@ var bodyParser = require("body-parser");
 var fs = require("fs");
 var upload = require("express-fileupload");
 const pg  = require('pg');
+var cookieParser = require('cookie-parser')
 
 var pusher = new Pusher({
   appId: '616886',
@@ -16,10 +17,12 @@ var pusher = new Pusher({
 
 var app = express();
 
+app.use(cookieParser());
+
 const config = {
     user: 'postgres',
     database: 'resaler_DB',
-    password: 'xxx',
+    password: '178gz90Gruny19',
     port: 5432
 };
 
@@ -49,16 +52,78 @@ app.get('/', function(req, res) {
                 console.log(err);
                 res.status(400).send(err);
             }
+            console.log('Cookies: ', req.cookies)
+            console.log(req.cookies.user_id);
             var catalog = result.rows;
             var catalogJSON = JSON.stringify(catalog);
-            res.render('index', {catalogJSON : catalogJSON});
+            if (req.cookies.email == undefined) {
+              res.render('index', {catalogJSON : catalogJSON, info : ''});
+            }
+            else {
+                res.render('index', {catalogJSON : catalogJSON, info : req.cookies.email});
+            }
+            //res.render('index', {catalogJSON : catalogJSON});
        })
    })
 });
 
 
 app.get('/sell', function(req, res) {
-	res.sendFile(__dirname + '/new-offer.html');
+  if (req.cookies.user_id == undefined) {
+    res.redirect('/sign');
+  }
+  else {
+      res.sendFile(__dirname + '/new-offer.html');
+  }
+});
+
+app.get('/out', function(req, res) {
+  res.clearCookie('email');
+  res.clearCookie('user_id');
+  res.redirect('/');
+});
+
+app.get('/log', function(req, res) {
+  res.sendFile(__dirname + '/log.html');
+});
+
+app.post('/login', urlencodedParser, function(req, res) {
+  pool.connect(function (err, client, done) {
+    client.query('select * from users where users.login = $1 and users.link = $2', [req.body.email, req.body.password], function (err, result) {
+
+        done()
+        if (result.rows.length == 0) {
+            res.sendFile(__dirname + '/log.html');
+        }
+        else {
+            res.cookie('user_id', result.rows[0].user_id, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            res.cookie('email', result.rows[0].name, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            res.redirect('/');
+        }
+    })
+  })
+});
+
+app.post('/signin', urlencodedParser, function(req, res) {
+  pool.connect(function (err, client, done) {
+    client.query('select login from users where users.login = $1', [req.body.email], function (err, result) {
+      done()
+        if (result.rows.length == 0) {
+            client.query('INSERT INTO users(name, login, link) VALUES($1, $2, $3);', [req.body.name, req.body.email, req.body.password], function (err, result) {
+              res.redirect('/');
+                //done()
+                })
+        }
+        else {
+          res.sendFile(__dirname + '/sign.html');
+        }
+        //done()
+    })
+  })
+});
+
+app.get('/sign', function(req, res) {
+  res.sendFile(__dirname + '/sign.html');
 });
 
 app.post('/filter', urlencodedParser, function (req, res) {
@@ -67,6 +132,8 @@ app.post('/filter', urlencodedParser, function (req, res) {
 })
 
 app.post('/place', urlencodedParser, function (req, res) {
+
+
 
 
   var main = true;
@@ -98,27 +165,31 @@ app.post('/place', urlencodedParser, function (req, res) {
 
 
    pool.connect(function (err, client, done) {
-    client.query('select max(lots.lot_id) from lots;', function (err, result) {
-      counter = result.rows[0].max + 1;
-       client.query('select max(images.img_id) from images;', function (err, result) {
-            max = result.rows[0].max + 1;
-            for (i=0; i<req.files.basePhoto.length; i++){
-               fs.writeFileSync("public/image" + Number(max + i) + ".jpg", req.files.basePhoto[i].data);
-            }
-            client.query('INSERT INTO lots(user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', 
-                      [1, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), gender, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state], 
-                          function (err, result) {
-                            console.log(max);
-                for (i=0; i<req.files.basePhoto.length; i++){
-                  if (i>0) main = false;
-                   client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2);', [counter, main], function (err, result) {
-              })
-               }
-               done()
-                  res.redirect('/');
-          })
-       })
-   })
+    client.query('BEGIN', function (err, result) {
+      client.query('select max(lots.lot_id) from lots;', function (err, result) {
+        counter = result.rows[0].max + 1;
+         client.query('select max(images.img_id) from images;', function (err, result) {
+              max = result.rows[0].max + 1;
+              for (i=0; i<req.files.basePhoto.length; i++){
+                 fs.writeFileSync("public/image" + Number(max + i) + ".jpg", req.files.basePhoto[i].data);
+              }
+              client.query('INSERT INTO lots(user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', 
+                        [req.cookies.user_id, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), gender, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state], 
+                            function (err, result) {
+                              console.log(max);
+                  for (i=0; i<req.files.basePhoto.length; i++){
+                    if (i>0) main = false;
+                     client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2);', [counter, main], function (err, result) {
+                })
+                 }
+                 client.query('COMMIT', function (err, result) {
+                   done()
+                      res.redirect('/');
+                })
+            })
+         })
+        })
+     })
   })
 
 
@@ -138,6 +209,7 @@ app.post('/update/:id', urlencodedParser, function (req, res) {
    })
 })
 
+
 app.get('/auction/:id', function(req, res) {
   if (begin[Number(req.params.id)] == true) {
     startTimer(req.params.id);
@@ -147,7 +219,13 @@ app.get('/auction/:id', function(req, res) {
   pool.connect(function (err, client, done) {
        client.query('select * from lots, images where lots.lot_id = images.lot_id and lots.lot_id = $1;', [Number(req.params.id)], function (err, result) {
       done()
-            res.render('auction', {shmot : result.rows});
+            //res.render('auction', {shmot : result.rows});
+            if (req.cookies.email == undefined) {
+              res.render('auction', {shmot : result.rows, info : ''});
+            }
+            else {
+                res.render('auction', {shmot : result.rows, info : req.cookies.email});
+            }
        })
    })
 });

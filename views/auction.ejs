@@ -28,28 +28,63 @@
   </head>
   <body style="padding: 20px 18%;">
     <div class="row">
-      <div class="col-md-4"><h1>RussianResaler</h1></div>
-      <div class="col-md-4">
-      <form class="form-inline">
-        <div class="form-group">
-            <input type="text" class="form-control" id="search" placeholder="Поиск">
-        </div>
-          <button type="submit" class="btn btn-link"><img src="https://raw.githubusercontent.com/Egor14/resaler/master/public/search.png" style="width: 30px; height: 30px;"></button>
-      </form>
-      </div>
-      <div class="col-md-4">
-        <form action="/sell" method="get">
-          <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Продать">
-          <button type="button" class="btn btn-success">Войти</button>
-        </form>
-      </div>
-      </div>
-      <hr>
-      <div class="row category">
-      <div class="col-md-4"><h5>МУЖСКОЕ</h5></div>
-      <div class="col-md-4"><h5>ЖЕНСКОЕ</h5></div>
-      <div class="col-md-4"><h5>БРЕНДЫ</h5></div>
+    <div class="col-md-4">
+      <h1>RussianResaler</h1>
+      <br>
+      <h5>Аккаунт: <%= info %></h5>
     </div>
+    <div class="col-md-4">
+    <form class="form-inline" >
+      <div class="form-group" style="width: 150px">
+          <input type="text" class="form-control" id="search" placeholder="Поиск">
+      </div>
+        <button type="submit" class="btn btn-link"><img src="https://raw.githubusercontent.com/Egor14/resaler/master/public/search.png" style="width: 30px; height: 30px;"></button>
+    </form>
+    <br>
+    <h5>Денег на счете: <%= info %></h5>
+    </div>
+
+
+    <div class="col-md-2">
+
+      <form action="/log" method="get">
+        <!-- <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Продать"> -->
+        <button type="submit" class="btn btn-success but">Войти</button>
+
+        <!-- <button type="button" class="btn btn-success">Войти</button> -->
+      </form>
+
+      <form action="/sell" method="get">
+        <!-- <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Продать"> -->
+
+        <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary but" value="Продать">
+        <!-- <button type="button" class="btn btn-success">Войти</button> -->
+      </form>
+
+      </form>
+
+      
+    </div>
+
+    <div class="col-md-2">
+
+      <form action="/sign" method="get">
+        <!-- <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Продать"> -->
+        <button type="submit" class="btn btn-success but">Регистрация</button>
+      </form>
+
+      <form action="/out" method="get">
+        <!-- <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Продать"> -->
+        <button type="submit" class="btn btn-outline-danger but">Выйти</button>
+      </form>
+
+      
+    </div>
+
+
+
+    </div>
+    <hr>
 
 
 
@@ -83,6 +118,11 @@
               <span class="sr-only">Next</span>
             </a>
           </div>
+
+          Комментарий: 
+          <br>
+          <%= shmot[0].comment %>
+
         </div>
 
         <div class="col-md-5">
@@ -115,12 +155,8 @@
             </div>
           </form>
 
-        </div>
-
-    </div>
-
-    <div>
-          <h2>Описание</h2>
+          <br>
+          <h3>Описание</h3>
 
           <% if (shmot[0].gender) { %>
               Женское
@@ -168,14 +204,11 @@
 
           Состояние: <%= shmot[0].condition %>
 
-          <br>
-          <br>
+        </div>
 
-          Комментарий: 
-          <br>
-          <%= shmot[0].comment %>
+    </div>
 
-     </div>
+  
 
     
 

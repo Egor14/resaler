@@ -27,6 +27,18 @@ body {
   background-color: black;
 }
 
+.but {
+  width: 125px;
+  margin: 10px;
+}
+
+.my-forms {
+  width: 400px;
+  height: 400px;
+  margin: 50px auto;
+  padding: 10px;
+}
+
 @include media-breakpoint-up(sm) {
   body {
     padding: 0px;
