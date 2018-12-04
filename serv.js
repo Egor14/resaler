@@ -52,8 +52,6 @@ app.get('/', function(req, res) {
                 console.log(err);
                 res.status(400).send(err);
             }
-            console.log('Cookies: ', req.cookies)
-            console.log(req.cookies.user_id);
             var catalog = result.rows;
             var catalogJSON = JSON.stringify(catalog);
             if (req.cookies.email == undefined) {
@@ -62,7 +60,6 @@ app.get('/', function(req, res) {
             else {
                 res.render('index', {catalogJSON : catalogJSON, info : req.cookies.email});
             }
-            //res.render('index', {catalogJSON : catalogJSON});
        })
    })
 });
@@ -111,13 +108,11 @@ app.post('/signin', urlencodedParser, function(req, res) {
         if (result.rows.length == 0) {
             client.query('INSERT INTO users(name, login, link) VALUES($1, $2, $3);', [req.body.name, req.body.email, req.body.password], function (err, result) {
               res.redirect('/');
-                //done()
                 })
         }
         else {
           res.sendFile(__dirname + '/sign.html');
         }
-        //done()
     })
   })
 });
@@ -176,7 +171,7 @@ app.post('/place', urlencodedParser, function (req, res) {
               client.query('INSERT INTO lots(user_id, brand, comment, time, price, gender, category, swap, country, city, size, condition) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);', 
                         [req.cookies.user_id, req.body.brand, req.body.description, req.body.time, Number(req.body.startPriceSell), gender, req.body.category, true, req.body.country, req.body.city, req.body.bootsSize, req.body.state], 
                             function (err, result) {
-                              console.log(max);
+                              //console.log(max);
                   for (i=0; i<req.files.basePhoto.length; i++){
                     if (i>0) main = false;
                      client.query('INSERT INTO images(lot_id, ismain) VALUES($1, $2);', [counter, main], function (err, result) {
@@ -219,7 +214,6 @@ app.get('/auction/:id', function(req, res) {
   pool.connect(function (err, client, done) {
        client.query('select * from lots, images where lots.lot_id = images.lot_id and lots.lot_id = $1;', [Number(req.params.id)], function (err, result) {
       done()
-            //res.render('auction', {shmot : result.rows});
             if (req.cookies.email == undefined) {
               res.render('auction', {shmot : result.rows, info : ''});
             }

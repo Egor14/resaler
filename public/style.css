@@ -39,6 +39,16 @@ body {
   padding: 10px;
 }
 
+a {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  text-decoration: none;
+  color: black;
+}
+
 @include media-breakpoint-up(sm) {
   body {
     padding: 0px;
