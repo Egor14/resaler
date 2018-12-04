@@ -1,4 +1,4 @@
-var btn2 = document.getElementById("btnYourRaise");
+/*var btn2 = document.getElementById("btnYourRaise");
 
 startTimer();
 function startTimer(){
@@ -26,4 +26,4 @@ function formatTime(time){
 function updateTime(){
 	document.getElementById("time").innerHTML = baseTime;
 }
-
+*/

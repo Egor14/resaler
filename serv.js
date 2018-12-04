@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 const config = {
     user: 'postgres',
-    database: 'resaler_DB',
+    database: 'resaler2',
     password: '178gz90Gruny19',
     port: 5432
 };
@@ -38,10 +38,11 @@ app.use('/auction/:id/',express.static(__dirname + '/public'));
 app.use(upload());
 
 
-var begin = [true, true, true, true, true];
+//var begin = [true, true, true, true, true];
 
 
 app.get('/', function(req, res) {
+  console.log(req.cookies);
   pool.connect(function (err, client, done) {
        if (err) {
            console.log("Can not connect to the DB" + err);
@@ -54,11 +55,11 @@ app.get('/', function(req, res) {
             }
             var catalog = result.rows;
             var catalogJSON = JSON.stringify(catalog);
-            if (req.cookies.email == undefined) {
-              res.render('index', {catalogJSON : catalogJSON, info : ''});
+            if (req.cookies.name == undefined) {
+              res.render('index', {catalogJSON : catalogJSON, info : '', money : ''});
             }
             else {
-                res.render('index', {catalogJSON : catalogJSON, info : req.cookies.email});
+                res.render('index', {catalogJSON : catalogJSON, info : req.cookies.name, money : req.cookies.cash});
             }
        })
    })
@@ -75,8 +76,9 @@ app.get('/sell', function(req, res) {
 });
 
 app.get('/out', function(req, res) {
-  res.clearCookie('email');
+  res.clearCookie('name');
   res.clearCookie('user_id');
+  res.clearCookie('cash');
   res.redirect('/');
 });
 
@@ -86,7 +88,7 @@ app.get('/log', function(req, res) {
 
 app.post('/login', urlencodedParser, function(req, res) {
   pool.connect(function (err, client, done) {
-    client.query('select * from users where users.login = $1 and users.link = $2', [req.body.email, req.body.password], function (err, result) {
+    client.query('select * from users where users.login = $1 and users.pass = $2', [req.body.email, req.body.password], function (err, result) {
 
         done()
         if (result.rows.length == 0) {
@@ -94,7 +96,9 @@ app.post('/login', urlencodedParser, function(req, res) {
         }
         else {
             res.cookie('user_id', result.rows[0].user_id, {expires: new Date(Date.now() + 3000000), httpOnly: true});
-            res.cookie('email', result.rows[0].name, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            res.cookie('name', result.rows[0].name, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            res.cookie('cash', result.rows[0].cash, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            console.log(res.cookie);
             res.redirect('/');
         }
     })
@@ -206,25 +210,26 @@ app.post('/update/:id', urlencodedParser, function (req, res) {
 
 
 app.get('/auction/:id', function(req, res) {
-  if (begin[Number(req.params.id)] == true) {
+  /*if (begin[Number(req.params.id)] == true) {
     startTimer(req.params.id);
     begin[req.params.id] = false;
-  }
+  }*/
   console.log(req.params.id);
   pool.connect(function (err, client, done) {
-       client.query('select * from lots, images where lots.lot_id = images.lot_id and lots.lot_id = $1;', [Number(req.params.id)], function (err, result) {
+       client.query('select lots.lot_id, lots.comment, lots.time, lots.price, lots.gender, lots.model, images.img_id, brands.brand, cities.city, categories.category, globals.global, sizes.size, conditions.condition from lots, images, brands, cities, categories, globals, sizes, conditions where lots.lot_id = images.lot_id  and lots.lot_id = $1 and lots.brand_id = brands.brand_id and lots.city_id = cities.city_id and lots.category_id = categories.category_id and categories.global_id = globals.global_id and lots.size_id = sizes.size_id and lots.condition_id = conditions.condition_id;', [Number(req.params.id)], function (err, result) {
       done()
-            if (req.cookies.email == undefined) {
-              res.render('auction', {shmot : result.rows, info : ''});
+      //console.log(result.rows);
+            if (req.cookies.name == undefined) {
+              res.render('auction', {shmot : result.rows, info : '', money : ''});
             }
             else {
-                res.render('auction', {shmot : result.rows, info : req.cookies.email});
+                res.render('auction', {shmot : result.rows, info : req.cookies.name, money : req.cookies.cash});
             }
        })
    })
 });
 
-function startTimer(option){
+/*function startTimer(option){
   currentTimer = catalog[option].time;
   var arr = currentTimer.split(':');
   var minutes = arr[0];
@@ -243,7 +248,7 @@ function formatTime(time){
   time = Number.parseInt(time);
   if (time < 10) return "0" + time
   else return time
-}
+}*/
 
 
 app.listen(3000);

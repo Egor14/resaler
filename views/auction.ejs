@@ -41,7 +41,7 @@
         <button type="submit" class="btn btn-link"><img src="https://raw.githubusercontent.com/Egor14/resaler/master/public/search.png" style="width: 30px; height: 30px;"></button>
     </form>
     <br>
-    <h5>Денег на счете: <%= info %></h5>
+    <h5>Денег на счете: <%= money %></h5>
     </div>
 
 
@@ -174,28 +174,16 @@
           <br>
           <br>
 
-          Категория: <%= shmot[0].category %>
+          Категория: <%= shmot[0].global + ' / ' + shmot[0].category %>
 
           <br>
           <br>
 
-          Город: <%= shmot[0].country + ", " + shmot[0].city  %>
+          Город: <%= shmot[0].city  %>
 
           <br>
           <br>
 
-          Обмен: 
-
-          <% if (shmot[0].swap) { %>
-              Да
-          <% } %>
-
-          <% if (shmot[0].swap == false) { %>
-              Нет
-          <% } %>
-
-          <br>
-          <br>
 
           Размер: <%= shmot[0].size %>
 
