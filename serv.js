@@ -1,11 +1,14 @@
 var express = require('express');
+require('dotenv').load();
 var Pusher = require('pusher');
 var path = require('path');
 var bodyParser = require("body-parser");
 var fs = require("fs");
 var upload = require("express-fileupload");
 const pg  = require('pg');
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
+var bcrypt = require('bcrypt');
+
 
 var pusher = new Pusher({
   appId: '616886',
@@ -18,6 +21,11 @@ var pusher = new Pusher({
 var app = express();
 
 app.use(cookieParser());
+
+//console.log(process.env.PASS);
+//console.log(process.env.secret);
+//console.log(process.env.key);
+
 
 const config = {
     user: 'postgres',
@@ -36,6 +44,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auction/:id/',express.static(__dirname + '/public'));
 
 app.use(upload());
+
+
+/*var passwordFromUser = "test_user_pass";
+ 
+// создаем соль
+var salt = bcrypt.genSaltSync(10);
+ 
+// шифруем пароль
+var passwordToSave = bcrypt.hashSync(passwordFromUser, salt)
+ 
+// выводим результат
+console.log(salt);
+console.log(passwordFromUser);
+console.log(passwordToSave);*/
+
 
 
 //var begin = [true, true, true, true, true];
@@ -71,7 +94,58 @@ app.get('/sell', function(req, res) {
     res.redirect('/sign');
   }
   else {
-      res.sendFile(__dirname + '/new-offer.html');
+
+      pool.connect(function (err, client, done) {
+        client.query('select * from cities;', function (err, result) {
+            var cities = result.rows; 
+            client.query('select * from sizes;', function (err, result) {
+                var sizes = result.rows; 
+                client.query('select * from conditions;', function (err, result) {
+                  var conditions = result.rows;  
+                  client.query('select * from brands;', function (err, result) {
+                    var brands = result.rows;  
+                    client.query('select * from categories;', function (err, result) {
+                      var categories = result.rows;  
+                      client.query('select * from globals;', function (err, result) {
+                        var globals = result.rows; 
+                        done();
+                        res.render('new-offer', {cities : cities, sizes : sizes, conditions : conditions, brands : brands, categories : categories, globals : globals});
+                      })     
+                    })     
+                  })     
+                })      
+            })      
+        })
+
+      /*client.query('select * from cities;', function (err, result) {
+                        var cities = result.rows;       
+                      })    
+
+      client.query('select * from sizes;', function (err, result) {
+                        var sizes = result.rows;       
+                      })    
+
+      client.query('select * from conditions;', function (err, result) {
+                        var conditions = result.rows;       
+                      })    
+
+      client.query('select * from cities;', function (err, result) {
+                        var cities = result.rows;       
+                      })    
+
+      client.query('select * from cities;', function (err, result) {
+                        var cities = result.rows;       
+                      })    
+
+      client.query('select * from cities;', function (err, result) {
+                        var cities = result.rows;       
+                      })   */ 
+
+
+     })
+
+
+      //res.render('new-offer');
   }
 });
 
@@ -110,7 +184,7 @@ app.post('/signin', urlencodedParser, function(req, res) {
     client.query('select login from users where users.login = $1', [req.body.email], function (err, result) {
       done()
         if (result.rows.length == 0) {
-            client.query('INSERT INTO users(name, login, link) VALUES($1, $2, $3);', [req.body.name, req.body.email, req.body.password], function (err, result) {
+            client.query('INSERT INTO users(name, login, link, cash, pass) VALUES($1, $2, $3, $4, $5);', [req.body.name, req.body.email, req.body.link, req.body.cash, req.body.password], function (err, result) {
               res.redirect('/');
                 })
         }
