@@ -29,6 +29,8 @@
 	  </div>
 
 
+
+
 	  <div class="col-md-2">
 
 	  	<form action="/log" method="get">
@@ -65,9 +67,17 @@
 	  	
 	  </div>
 
+	 <% if (value == 'true') { %>
+	 	<form action="/admin" method="get">
+	  		<!-- <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Продать"> -->
+	  		<button type="submit" class="btn btn-outline-danger">Страница для администратора</button>
+	  	</form>
+	 <% } %>
 
 
     </div>
+
+
 
     <hr>
     <div class="row category">
@@ -198,6 +208,25 @@
         
 	  	<% for (i=0; i<catalog.length; i++){ %>
 	  			<label><a href="/auction/<%=catalog[i].lot_id%>"><img class="lots" src = <%= 'image' + catalog[i].img_id + '.jpg' %>  alt="Third lot"></a><br><%= catalog[i].brand %></label>
+
+	  			<% if (value == 'true' && main == false) { %>
+	 				
+	 				<form action="/ok/<%= catalog[i].lot_id %>" method="get">
+
+	
+	  					<button type="submit" class="btn btn-success but">Одобрить</button>
+	  	
+	  				</form>
+
+	  				<form action="/no/<%= catalog[i].lot_id %>" method="get">
+
+	  
+	  					<button type="submit" class="btn btn-outline-danger but">Удалить</button>
+
+	  				</form>
+
+	 			<% } %>
+
 		<% } %>
 		
 	  </div>

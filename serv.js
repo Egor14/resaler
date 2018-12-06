@@ -26,7 +26,7 @@ app.use(cookieParser());
 
 const config = {
     user: 'postgres',
-    database: 'resaler2',
+    database: 'resaler4',
     password: process.env.PASS,
     port: 5432
 };
@@ -39,18 +39,20 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auction/:id/',express.static(__dirname + '/public'));
+app.use('/ok/:id/',express.static(__dirname + '/public'));
+app.use('/no/:id/',express.static(__dirname + '/public'));
 
 app.use(upload());
 
 
 
 app.get('/', function(req, res) {
-  //console.log(req.cookies);
+  console.log(req.cookies);
   pool.connect(function (err, client, done) {
        if (err) {
            console.log("Can not connect to the DB" + err);
        }
-       client.query('select * from lots, images where lots.lot_id = images.lot_id and images.ismain = true;', function (err, result) {
+       client.query('select * from lots, images where lots.lot_id = images.lot_id and images.ismain = true and lots.permiss = true;', function (err, result) {
             done();
             if (err) {
                 console.log(err);
@@ -59,10 +61,10 @@ app.get('/', function(req, res) {
             var catalog = result.rows;
             var catalogJSON = JSON.stringify(catalog);
             if (req.cookies.name == undefined) {
-              res.render('index', {catalogJSON : catalogJSON, info : '', money : ''});
+              res.render('index', {catalogJSON : catalogJSON, info : '', money : '', value : '', main : true});
             }
             else {
-                res.render('index', {catalogJSON : catalogJSON, info : req.cookies.name, money : req.cookies.cash});
+                res.render('index', {catalogJSON : catalogJSON, info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : true});
             }
        })
    })
@@ -104,12 +106,62 @@ app.get('/out', function(req, res) {
   res.clearCookie('name');
   res.clearCookie('user_id');
   res.clearCookie('cash');
+  res.clearCookie('value');
   res.redirect('/');
 });
 
 app.get('/log', function(req, res) {
   res.sendFile(__dirname + '/log.html');
 });
+
+app.get('/admin', function(req, res) {
+  if (req.cookies.value == 'true') {
+      pool.connect(function (err, client, done) {
+       if (err) {
+           console.log("Can not connect to the DB" + err);
+       }
+       client.query('select * from lots, images where lots.lot_id = images.lot_id and images.ismain = true and lots.permiss = false;', function (err, result) {
+            done();
+            if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+            var catalog = result.rows;
+            var catalogJSON = JSON.stringify(catalog);
+            if (req.cookies.name == undefined) {
+              res.render('index', {catalogJSON : catalogJSON, info : '', money : '', value : '', main : true});
+            }
+            else {
+                res.render('index', {catalogJSON : catalogJSON, info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : false});
+            }
+       })
+   })
+  }
+  else res.redirect('/');
+});
+
+app.get('/ok/:id', function(req, res) {
+  pool.connect(function (err, client, done) {
+    client.query('UPDATE lots SET permiss = $1 WHERE lot_id = $2', [true, Number(req.params.id)], function (err, result) {
+      if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+      done()
+        res.redirect('/admin');
+    })
+  })
+});
+
+app.get('/no/:id', function(req, res) {
+  pool.connect(function (err, client, done) {
+    client.query('DELETE FROM lots WHERE lot_id = $1;', [Number(req.params.id)], function (err, result) {
+      done()
+        res.redirect('/admin');
+    })
+  })
+});
+
 
 app.post('/login', urlencodedParser, function(req, res) {
   pool.connect(function (err, client, done) {
@@ -123,7 +175,8 @@ app.post('/login', urlencodedParser, function(req, res) {
             res.cookie('user_id', result.rows[0].user_id, {expires: new Date(Date.now() + 3000000), httpOnly: true});
             res.cookie('name', result.rows[0].name, {expires: new Date(Date.now() + 3000000), httpOnly: true});
             res.cookie('cash', result.rows[0].cash, {expires: new Date(Date.now() + 3000000), httpOnly: true});
-            //console.log(res.cookie);
+            res.cookie('value', result.rows[0].admin, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            console.log(req.cookies);
             res.redirect('/');
         }
     })
@@ -135,7 +188,7 @@ app.post('/signin', urlencodedParser, function(req, res) {
     client.query('select login from users where users.login = $1', [req.body.email], function (err, result) {
       done()
         if (result.rows.length == 0) {
-            client.query('INSERT INTO users(name, login, link, cash, pass) VALUES($1, $2, $3, $4, $5);', [req.body.name, req.body.email, req.body.link, req.body.cash, req.body.password], function (err, result) {
+            client.query('INSERT INTO users(name, login, link, cash, pass, admin) VALUES($1, $2, $3, $4, $5, $6);', [req.body.name, req.body.email, req.body.link, req.body.cash, req.body.password, false], function (err, result) {
               res.redirect('/');
                 })
         }
@@ -193,8 +246,8 @@ app.post('/place', urlencodedParser, function (req, res) {
               for (i=0; i<req.files.basePhoto.length; i++){
                  fs.writeFileSync("public/image" + Number(max + i) + ".jpg", req.files.basePhoto[i].data);
               }
-              client.query('INSERT INTO lots(lot_id, user_id, brand_id, comment, time, price, gender, category_id, city_id, size_id, condition_id, winner_id, model) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);', 
-                        [counter, req.cookies.user_id, req.body.brand, req.body.description, Number(req.body.time), Number(req.body.price), gender, req.body.category, req.body.city, req.body.size, req.body.condition, req.cookies.user_id, req.body.model], 
+              client.query('INSERT INTO lots(lot_id, user_id, brand_id, comment, time, price, gender, category_id, city_id, size_id, condition_id, permiss, model) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);', 
+                        [counter, req.cookies.user_id, req.body.brand, req.body.description, Number(req.body.time), Number(req.body.price), gender, req.body.category, req.body.city, req.body.size, req.body.condition, false, req.body.model], 
                             function (err, result) {
                               if (err) {
                 console.log('ошибка1');
