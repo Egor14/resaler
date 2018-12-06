@@ -42,7 +42,7 @@
       <br>
 
       <label>Бренд<br>
-          <select name="bootsSize" class="custom-select" required>
+          <select name="brand" class="custom-select" required>
 
             <% for (i=0; i<brands.length; i++) { %>
                 <option value="<%= brands[i].brand_id %>"> <%= brands[i].brand %> </option>
@@ -57,7 +57,7 @@
       </div> -->
 
       <label>Модель<br>
-          <input type="text" name="time" id="time" class="form-control" placeholder="xx:xx" required>
+          <input type="text" name="model" id="time" class="form-control" placeholder="xx:xx" required>
       </label>
 
 
@@ -80,7 +80,7 @@
       <br>
 
       <label>Категория<br>
-          <select name="bootsSize" class="custom-select" required>
+          <select name="category" class="custom-select" required>
 
             <% for (i=0; i<categories.length; i++) { %>
                 <option value="<%= categories[i].category_id %>"> <%= categories[i].category %> </option>
@@ -93,7 +93,7 @@
 
 
       <label>Размер<br>
-          <select name="bootsSize" class="custom-select" required>
+          <select name="size" class="custom-select" required>
 
             <% for (i=0; i<sizes.length; i++) { %>
                 <option value="<%= sizes[i].size_id %>"> <%= sizes[i].size %> </option>
@@ -105,7 +105,7 @@
       
 
       <label>Состояние<br>
-          <select name="bootsSize" class="custom-select" required>
+          <select name="condition" class="custom-select" required>
 
             <% for (i=0; i<conditions.length; i++) { %>
                 <option value="<%= conditions[i].condition_id %>"> <%= conditions[i].condition %> </option>
@@ -118,22 +118,22 @@
 
 
       <label>Стартовая цена<br>
-        <input type="number" name="startPriceSell" id="startPriceSell" class="form-control" placeholder="от" required>
+        <input type="number" name="price" id="startPriceSell" class="form-control" placeholder="от" required>
       </label>
 
       
 
 
       <label>Время аукциона<br>
-          <input type="text" name="time" id="time" class="form-control" placeholder="xx:xx" required>
+          <input type="number" name="time" id="time" class="form-control" placeholder="xx:xx" required>
       </label>
 
 
       
 
 
-      <label>Место нахождения<br>
-          <select name="bootsSize" class="custom-select" required>
+      <label>Город<br>
+          <select name="city" class="custom-select" required>
 
             <% for (i=0; i<cities.length; i++) { %>
                 <option value="<%= cities[i].city_id %>"> <%= cities[i].city %> </option>
