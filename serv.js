@@ -25,10 +25,12 @@ app.use(cookieParser());
 
 
 const config = {
-    user: 'postgres',
-    database: 'resaler4',
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    user: process.env.NAME,
     password: process.env.PASS,
-    port: 5432
+    port: 5432,
+    ssl: true
 };
 
 const pool = new pg.Pool(config);

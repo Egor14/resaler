@@ -4,7 +4,8 @@
   "description": "",
   "main": "serv.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node serv.js"
   },
   "repository": {
     "type": "git",
@@ -32,3 +33,6 @@
     "pusher": "^2.1.3"
   }
 }
+
+
+

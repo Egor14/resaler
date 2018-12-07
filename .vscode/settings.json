@@ -1,0 +1,7 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}"
+    ],
+    "appService.deploySubpath": "",
+    "appService.defaultWebAppToDeploy": "/subscriptions/aec44a91-1d08-48d0-8373-fe83775c2514/resourceGroups/appsvc_rg_Linux_centralus/providers/Microsoft.Web/sites/resaler"
+}
