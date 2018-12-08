@@ -47,19 +47,6 @@ app.use('/no/:id/',express.static(__dirname + '/public'));
 app.use(upload());
 
 
-/*var passwordFromUser = "test_user_pass";
- 
-// создаем соль
-var salt = bcrypt.genSaltSync(10);
- 
-// шифруем пароль
-var passwordToSave = bcrypt.hashSync(passwordFromUser, salt)
- 
-// выводим результат
-console.log(salt);
-console.log(passwordFromUser);
-console.log(passwordToSave);*/
-
 
 app.get('/', function(req, res) {
   console.log(req.cookies);
@@ -91,7 +78,6 @@ app.get('/sell', function(req, res) {
     res.redirect('/sign');
   }
   else {
-
       pool.connect(function (err, client, done) {
         client.query('select * from cities;', function (err, result) {
             var cities = result.rows; 
@@ -128,6 +114,27 @@ app.get('/out', function(req, res) {
 app.get('/log', function(req, res) {
   res.sendFile(__dirname + '/log.html');
 });
+
+app.post('/feedback', urlencodedParser, function(req, res) {
+  if (req.cookies.user_id == undefined) {
+    res.redirect('/sign');
+  }
+  else {
+  pool.connect(function (err, client, done) {
+    client.query('select max(reviews.review_id) from reviews;', function (err, result) {
+      max = result.rows[0].max + 1;
+                      client.query('INSERT INTO reviews(review_id, review, score, customer_id, permiss) VALUES($1, $2, $3, $4, $5);', [max, req.body.feedback, req.body.score, req.cookies.user_id, true], function (err, result) {
+                          client.query('INSERT INTO users_reviews(user_id, review_id) VALUES($1, $2);', [req.body.user_id, max], function (err, result) {
+                              done();
+                              res.redirect('/');
+                          })
+                      })
+                })
+
+    })
+  }
+});
+
 
 app.get('/admin', function(req, res) {
   if (req.cookies.value == 'true') {
@@ -180,7 +187,7 @@ app.get('/no/:id', function(req, res) {
 
 app.post('/login', urlencodedParser, function(req, res) {
   pool.connect(function (err, client, done) {
-    client.query('select * from users where users.login = $1 and users.pass = $2', [req.body.email, req.body.password], function (err, result) {
+    client.query('select * from users where users.login = $1 and users.pass = $2', [req.body.email, bcrypt.hashSync(req.body.password, process.env.SALT)], function (err, result) {
 
         done()
         if (result.rows.length == 0) {
@@ -203,7 +210,7 @@ app.post('/signin', urlencodedParser, function(req, res) {
     client.query('select login from users where users.login = $1', [req.body.email], function (err, result) {
       done()
         if (result.rows.length == 0) {
-            client.query('INSERT INTO users(name, login, link, cash, pass, admin) VALUES($1, $2, $3, $4, $5, $6);', [req.body.name, req.body.email, req.body.link, req.body.cash, req.body.password, false], function (err, result) {
+            client.query('INSERT INTO users(name, login, link, cash, pass, admin) VALUES($1, $2, $3, $4, $5, $6);', [req.body.name, req.body.email, req.body.link, req.body.cash, bcrypt.hashSync(req.body.password, process.env.SALT), false], function (err, result) {
               res.redirect('/');
                 })
         }
@@ -232,24 +239,12 @@ app.post('/place', urlencodedParser, function (req, res) {
   var max = 0;
   var number = 0;
 
-
-   console.log(req.body);
-
-   //res.redirect('/');
-
-
-
    if (req.body.sex == 0) {
     var gender = false;
    }
    else {
     var gender = true;
    }
-
-
-
-
-
 
 
    pool.connect(function (err, client, done) {
@@ -268,13 +263,11 @@ app.post('/place', urlencodedParser, function (req, res) {
                 console.log('ошибка1');
                 res.status(400).send(err);
             }
-                              //console.log(max);
                   for (i=0; i<req.files.basePhoto.length; i++){
                     if (i>0) main = false;
                      client.query('INSERT INTO images(img_id, lot_id, img_name, ismain) VALUES($1, $2, $3, $4);', [max + i, counter, "image" + Number(max + i) + ".jpg", main], function (err, result) {
                if (err) {
                 console.log('ошибка' + i);
-                //res.status(400).send(err);
             }
                 })
                  }
@@ -306,45 +299,25 @@ app.post('/update/:id', urlencodedParser, function (req, res) {
 
 
 app.get('/auction/:id', function(req, res) {
-  /*if (begin[Number(req.params.id)] == true) {
-    startTimer(req.params.id);
-    begin[req.params.id] = false;
-  }*/
-  //console.log(req.params.id);
   pool.connect(function (err, client, done) {
-       client.query('select lots.lot_id, lots.comment, lots.time, lots.price, lots.gender, lots.model, images.img_id, brands.brand, cities.city, categories.category, globals.global, sizes.size, conditions.condition from lots, images, brands, cities, categories, globals, sizes, conditions where lots.lot_id = images.lot_id  and lots.lot_id = $1 and lots.brand_id = brands.brand_id and lots.city_id = cities.city_id and lots.category_id = categories.category_id and categories.global_id = globals.global_id and lots.size_id = sizes.size_id and lots.condition_id = conditions.condition_id;', [Number(req.params.id)], function (err, result) {
-      done()
-      //console.log(result.rows);
+       client.query('select lots.lot_id, lots.user_id, lots.comment, lots.time, lots.price, lots.gender, lots.model, images.img_id, brands.brand, cities.city, categories.category, globals.global, sizes.size, conditions.condition from lots, images, brands, cities, categories, globals, sizes, conditions where lots.lot_id = images.lot_id  and lots.lot_id = $1 and lots.brand_id = brands.brand_id and lots.city_id = cities.city_id and lots.category_id = categories.category_id and categories.global_id = globals.global_id and lots.size_id = sizes.size_id and lots.condition_id = conditions.condition_id;', [Number(req.params.id)], function (err, result) {
+      //done()
+      shmot = result.rows;
+        client.query('select reviews.review, users.name, reviews.score from reviews, users, users_reviews where users_reviews.user_id = $1 and users_reviews.review_id = reviews.review_id and reviews.customer_id = users.user_id', [shmot[0].user_id], function (err, result) {
+          done()
             if (req.cookies.name == undefined) {
-              res.render('auction', {shmot : result.rows, info : '', money : ''});
+              res.render('auction', {shmot : shmot, info : '', money : '', fback : result.rows});
             }
             else {
-                res.render('auction', {shmot : result.rows, info : req.cookies.name, money : req.cookies.cash});
+                res.render('auction', {shmot : shmot, info : req.cookies.name, money : req.cookies.cash, fback : result.rows});
             }
+            
+        })
        })
    })
 });
 
-/*function startTimer(option){
-  currentTimer = catalog[option].time;
-  var arr = currentTimer.split(':');
-  var minutes = arr[0];
-  var seconds = arr[1];
-  if (minutes == 0 && seconds == 0){
-    return;
-  }
-  else seconds -= 1;
 
-  catalog[option].time = formatTime(minutes) + ":" + formatTime(seconds);
-
-  setTimeout(startTimer, 1000, option);
-}
-
-function formatTime(time){
-  time = Number.parseInt(time);
-  if (time < 10) return "0" + time
-  else return time
-}*/
 
 
 app.listen(process.env.PORT);

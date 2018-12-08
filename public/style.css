@@ -39,6 +39,10 @@ body {
   padding: 10px;
 }
 
+.feedback {
+  background-color: #EAEAEA;
+}
+
 a {
   text-decoration: none;
   color: black;

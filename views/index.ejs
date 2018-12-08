@@ -35,7 +35,9 @@
 
 	  	<form action="/log" method="get">
 	  		<!-- <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Продать"> -->
-	  		<button type="submit" class="btn btn-success but">Войти</button>
+	  		<button type="submit" class="btn btn-success but" <% if (info != '') { %>
+	  																disabled
+	  															<% } %>>Войти</button>
 
 	  		<!-- <button type="button" class="btn btn-success">Войти</button> -->
 	  	</form>
@@ -56,7 +58,9 @@
 
 	  	<form action="/sign" method="get">
 	  		<!-- <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Продать"> -->
-	  		<button type="submit" class="btn btn-success but">Регистрация</button>
+	  		<button type="submit" class="btn btn-success but" <% if (info != '') { %>
+	  																disabled
+	  															<% } %>>Регистрация</button>
 	  	</form>
 
 	  	<form action="/out" method="get">
@@ -85,126 +89,9 @@
 	  <div class="col-md-4"><h5>ЖЕНСКОЕ</h5></div>
 	  <div class="col-md-4"><h5>БРЕНДЫ</h5></div>
     </div>
-    <div class="row" style="margin-top: 30px;">
-	  <div class="col-lg-3 col-md-4 col-xs-12 col-12">
-	  	<form action="/filter" method="post">
-		  	<label>Категория
-				<div class="form-check" style="margin-left: 20px;">
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="boots" value="1">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Обувь</span>
-					</label>
-					<br>
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="top" value="1">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Верх</span>
-					</label>
-					<br>
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="bottom" value="1">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Низ</span>
-					</label>
-					<br>
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="other" value="1">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Аксессуары</span>
-					</label>
-					<br>
-				</div>
-			</label>
-			<label>Бренд<br>
-					<select name="brand" class="custom-select">
-					  <option selected>Open this select menu</option>
-					  <option value="1">Supreme</option>
-					  <option value="2">Gucci</option>
-					  <option value="3">Palace</option>
-					</select>
-			</label>		  
-			<label>Размер<br>
-					<select name="bootsSize" class="custom-select">
-					  <option selected>Обувь</option>
-					  <option value="1">Supreme</option>
-					  <option value="2">Gucci</option>
-					  <option value="3">Palace</option>
-					</select>
-					<select name="topSize" class="custom-select">
-					  <option selected>Верх</option>
-					  <option value="1">Supreme</option>
-					  <option value="2">Gucci</option>
-					  <option value="3">Palace</option>
-					</select>
-					<select name="bottomSize" class="custom-select">
-					  <option selected>Низ</option>
-					  <option value="1">Supreme</option>
-					  <option value="2">Gucci</option>
-					  <option value="3">Palace</option>
-					</select>
-					<select name="otherSize" class="custom-select">
-					  <option selected>Аксессуары</option>
-					  <option value="1">Supreme</option>
-					  <option value="2">Gucci</option>
-					  <option value="3">Palace</option>
-					</select>
-			</label>
-			    <div class="form-check" style="margin-left: 20px;">
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" id="exchange" value="exchange">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Обмен</span>
-					</label>
-				</div>
-			<label>Цена<br>
-		  	  <input type="number" name="startPrice" id="startPrice" class="form-control" placeholder="от">
-		  	  <input type="number" name="stopPrice" id="stopPrice" class="form-control" placeholder="до">
-		    </label>
-			<label>Состояние<br>
-			    <div class="form-check" style="margin-left: 20px;">
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="state1" value="1">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Новая с биркой</span>
-					</label>
-					<br>
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="state2" value="2">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Новая без бирки</span>
-					</label>
-					<br>
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="state3" value="3">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Есть деффекты</span>
-					</label>
-					<br>
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="state4" value="4">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Надевалась один раз</span>
-					</label>
-					<br>
-					<label class="custom-control custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" name="state5" value="5">
-					  <span class="custom-control-indicator"></span>
-					  <span class="custom-control-description">Надевалась несколько раз</span>
-					</label>
-				</div>
-			</label>	
-		    <label>Место нахождения<br>
-		  	  <input type="text" name="country" id="country" class="form-control" placeholder="Страна">
-		  	  <input type="text" name="city" id="city" class="form-control" placeholder="Город">
-		    </label>
-		    <input type="submit" name="bt2"  id="btnYourRaise" class="btn btn-success" value="Показать">
-		  	<button type="button" class="btn btn-outline-secondary">Сбросить</button>
-	    </form>
-	  </div>
 
-	  <div class="col-md-9">
 	  	<% catalog = JSON.parse(catalogJSON); %> 
+
         
 	  	<% for (i=0; i<catalog.length; i++){ %>
 	  			<label><a href="/auction/<%=catalog[i].lot_id%>"><img class="lots" src = <%= 'image' + catalog[i].img_id + '.jpg' %>  alt="Third lot"></a><br><%= catalog[i].brand %></label>
@@ -229,7 +116,7 @@
 
 		<% } %>
 		
-	  </div>
+	
 
     
 

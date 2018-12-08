@@ -201,9 +201,53 @@
 
     </div>
 
-  
+    <br>
 
-    
+    <% if (info != '') { %>
+      <form action="/feedback" method="post">
+
+        <label>Оценка продавцу<br>
+          <select name="score" class="custom-select" required>
+
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+                
+          </select>
+      </label>
+
+        <div class="form-group">
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Написать отзыв о продавце" name="feedback" required=""></textarea>
+        </div>
+
+        <input type="hidden" id="user_id" name="user_id" value="<%= shmot[0].user_id %>">
+
+        <input type="submit" name="bt1"  id="btnYour" class="btn btn-primary" value="Опубликовать">
+
+      </form>
+
+      <% } %>
+
+      <br>
+
+      <% if (fback.length == 1) { %>
+        <h3><span class="badge badge-secondary"><%= fback[0].name %></span></h3>
+        <div class="feedback">
+          <%= fback[0].review %>
+        </div>
+      <% } %>
+      <% if (fback.length > 1) { %>
+          <% for (i=0; i<fback.length; i++) { %>
+            <h3><span class="badge badge-secondary"><%= fback[i].name %></span></h3>
+            <div class="feedback">
+          <%= fback[i].review %>
+            </div>
+            <br>
+          <% } %>
+      <% } %>
+
 
     <script src="timer.js"></script>
 
