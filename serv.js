@@ -126,7 +126,7 @@ app.get('/out', function(req, res) {
 });
 
 app.get('/log', function(req, res) {
-  res.sendFile(__dirname + '/log.html');
+  res.sendFile(__dirname + '/vk.html');
 });
 
 app.get('/admin', function(req, res) {
