@@ -47,6 +47,19 @@ app.use('/no/:id/',express.static(__dirname + '/public'));
 app.use(upload());
 
 
+/*var passwordFromUser = "test_user_pass";
+ 
+// создаем соль
+var salt = bcrypt.genSaltSync(10);
+ 
+// шифруем пароль
+var passwordToSave = bcrypt.hashSync(passwordFromUser, salt)
+ 
+// выводим результат
+console.log(salt);
+console.log(passwordFromUser);
+console.log(passwordToSave);*/
+
 
 app.get('/', function(req, res) {
   console.log(req.cookies);
