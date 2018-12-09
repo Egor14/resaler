@@ -41,7 +41,7 @@
         <button type="submit" class="btn btn-link"><img src="https://raw.githubusercontent.com/Egor14/resaler/master/public/search.png" style="width: 30px; height: 30px;"></button>
     </form>
     <br>
-    <h5>Денег на счете: <%= money %></h5>
+    <!-- <h5>Денег на счете: <%= money %></h5> -->
     </div>
 
 
@@ -248,16 +248,36 @@
 
       <% if (fback.length == 1) { %>
         <h3><span class="badge badge-secondary"><%= fback[0].name %></span></h3>
-        <div class="feedback">
-          <%= fback[0].review %>
-        </div>
-      <% } %>
+
+        <% if (fback[0].score != undefined) { %>
+          <% for (j=0; j<fback[0].score; j++) { %>
+                  <img src="https://raw.githubusercontent.com/Egor14/resaler/master/public/star.png" style="height: 20px; width: 20px;">
+              <% } %>
+          <% } %>
+
+              <br>
+              <br>
+          <div class="feedback">
+            <%= fback[0].review %>
+          </div>
+        <% } %>
+       
+
+
       <% if (fback.length > 1) { %>
           <% for (i=0; i<fback.length; i++) { %>
             <h3><span class="badge badge-secondary"><%= fback[i].name %></span></h3>
+
+
+            <% if (fback[i].score != undefined) { %>
             <% for (j=0; j<fback[i].score; j++) { %>
-                <img src="">
+                <img src="https://raw.githubusercontent.com/Egor14/resaler/master/public/star.png" style="height: 20px; width: 20px;">
             <% } %>
+             <% } %>
+
+
+            <br>
+            <br>
             <div class="feedback">
           <%= fback[i].review %>
             </div>

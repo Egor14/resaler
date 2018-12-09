@@ -208,7 +208,7 @@ app.post('/signin', urlencodedParser, function(req, res) {
     client.query('select login from users where users.login = $1', [req.body.email], function (err, result) {
       done()
         if (result.rows.length == 0) {
-            client.query('INSERT INTO users(name, login, link, cash, pass, admin) VALUES($1, $2, $3, $4, $5, $6);', [req.body.name, req.body.email, req.body.link, req.body.cash, bcrypt.hashSync(req.body.password, process.env.SALT), false], function (err, result) {
+            client.query('INSERT INTO users(name, login, link, cash, pass, admin) VALUES($1, $2, $3, $4, $5, $6);', [req.body.name, req.body.email, req.body.link, 2500, bcrypt.hashSync(req.body.password, process.env.SALT), false], function (err, result) {
               res.redirect('/');
                 })
         }
@@ -262,7 +262,7 @@ app.post('/place', urlencodedParser, function (req, res) {
                 }
               }
               client.query('INSERT INTO lots(lot_id, user_id, brand_id, comment, time, price, gender, category_id, city_id, size_id, condition_id, permiss, model) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);', 
-                        [counter, req.cookies.user_id, req.body.brand, req.body.description, Number(req.body.time), Number(req.body.price), gender, req.body.category, req.body.city, req.body.size, req.body.condition, false, req.body.model], 
+                        [counter, req.cookies.user_id, req.body.brand, req.body.description, 333, Number(req.body.price), gender, req.body.category, req.body.city, req.body.size, req.body.condition, false, req.body.model], 
                             function (err, result) {
                               if (err) {
                 console.log('ошибка1');

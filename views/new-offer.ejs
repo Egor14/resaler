@@ -57,7 +57,7 @@
       </div> -->
 
       <label>Модель<br>
-          <input type="text" name="model" id="time" class="form-control" placeholder="xx:xx" required>
+          <input type="text" name="model" id="time" class="form-control" placeholder="xx:xx" required maxlength="50">
       </label>
 
 
@@ -117,16 +117,16 @@
       <br>
 
 
-      <label>Стартовая цена<br>
-        <input type="number" name="price" id="startPriceSell" class="form-control" placeholder="от" required>
+      <label>Цена (руб)<br>
+        <input type="number" name="price" id="startPriceSell" class="form-control" placeholder="2500" required min="0" max="1000000">
       </label>
 
       
 
 
-      <label>Время аукциона<br>
+      <!-- <label>Время аукциона<br>
           <input type="number" name="time" id="time" class="form-control" placeholder="xx:xx" required>
-      </label>
+      </label> -->
 
 
       
