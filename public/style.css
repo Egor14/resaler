@@ -3,8 +3,8 @@
 }
 
 .lots {
-	width: 200px;
-	height: 170px;
+
+	height: 200px;
 	padding: 10px;
 	margin: 20px 20px 0px 0px;
 }
@@ -30,6 +30,10 @@ body {
 .but {
   width: 125px;
   margin: 10px;
+}
+
+.auc {
+  height: 500px;
 }
 
 .my-forms {
