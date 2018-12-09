@@ -16,17 +16,17 @@
 	<form action="/signin" method="post" class="my-forms"> 
 		<a href="/"><h1>RussianResaler</h1></a>
 		<h2>Регистрация</h2>
-		<label for="example-email" class="col-form-label">Имя</label>
-          <input class="form-control" type="text" id="example-email" placeholder="Denis" name="name" required>
+		<label for="example-email" class="col-form-label">Имя (только латинские символы)</label>
+          <input class="form-control" type="text" id="example" placeholder="Denis" name="name" required pattern="^[a-zA-Z]+$">
 
-         <label for="example-email" class="col-form-label">Ссылка VK</label>
-          <input class="form-control" type="text" id="example-email" placeholder="https://vk.com/vipmegogor" name="link" required>
+         <label for="example-email" class="col-form-label">Ссылка на аккаун в соцсети</label>
+          <input class="form-control" type="url" id="example-email" placeholder="https://vk.com/vipmegogor" value="https://vk.com/" name="link" required>
 
 		  <label for="example-email-input" class="col-form-label">Адрес электронной почты</label>
-		    <input class="form-control" type="text" id="example-email-input" name="email" placeholder="example@mail.ru" required>
+		    <input class="form-control" type="email" id="example-email-input" name="email" placeholder="example@mail.ru" required>
 
 		  <label for="example-password-input" class="col-form-label">Пароль</label>
-		    <input class="form-control" type="password"  id="example-password-input" name="password" placeholder="asdadasa" required>
+		    <input class="form-control" type="password"  id="example-password-input" name="password" placeholder="********" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*">
 
 		   <!-- <label for="example-password-input" class="col-form-label">Пополнить счет</label>
 		    <input class="form-control" type="number"  id="example-password-input" name="cash" placeholder="4500" required> -->

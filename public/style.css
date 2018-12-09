@@ -32,6 +32,9 @@ body {
   margin: 10px;
 }
 
+input:invalid {border-color: red;}
+input:valid {border-color: green;}
+
 .auc {
   height: 500px;
 }

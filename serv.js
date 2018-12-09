@@ -47,9 +47,23 @@ app.use('/no/:id/',express.static(__dirname + '/public'));
 app.use(upload());
 
 
+app.get('/isDbConnected', function(req, res) {
+  pool.connect(function (err, client, done) {
+    if (err) {
+        done();
+           res.status(400).send(err);
+       }
+    else {
+      done();
+      res.status(200);
+    }
+  })
+});
+
+
 
 app.get('/', function(req, res) {
-  console.log(req.cookies);
+  //console.log(req.cookies);
   pool.connect(function (err, client, done) {
        if (err) {
            console.log("Can not connect to the DB" + err);
