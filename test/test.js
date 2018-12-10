@@ -6,7 +6,7 @@ var should = require('should'),
 describe('Тесты', function(){
 
     it('Проверка подключения к БД', function(done){
-        supertest('https://resaler.herokuapp.com')
+        supertest('http://localhost:3000')
             .get('/isDbConnected')
             .expect(200)
             .end(function(err, res){

@@ -1,3 +1,7 @@
+
+
+// Подключение библиотек -------------------------------------------------------------------------------
+
 var express = require('express');
 require('dotenv').load();
 var Pusher = require('pusher');
@@ -8,15 +12,6 @@ var upload = require("express-fileupload");
 const pg  = require('pg');
 var cookieParser = require('cookie-parser');
 var bcrypt = require('bcrypt');
-
-/*
-var pusher = new Pusher({
-  appId: '616886',
-  key: process.env.key,
-  secret: process.env.secret,
-  cluster: 'eu',
-  encrypted: true
-});*/
 
 var app = express();
 
@@ -47,23 +42,31 @@ app.use('/no/:id/',express.static(__dirname + '/public'));
 app.use(upload());
 
 
+// -------------------------------------------------------------------------------------------------------
+
+
+// Проверка на подключение к БД --------------------------------------------------------------------------
+
 app.get('/isDbConnected', function(req, res) {
   pool.connect(function (err, client, done) {
     if (err) {
         done();
-           res.status(400).send(err);
+           res.sendStatus(400);
        }
     else {
       done();
-      res.status(200);
+      res.sendStatus(200);
     }
   })
 });
 
+// ------------------------------------------------------------------------------------------------------
+
+
+// Запрос для перехода на главную страницу --------------------------------------------------------------
 
 
 app.get('/', function(req, res) {
-  //console.log(req.cookies);
   pool.connect(function (err, client, done) {
        if (err) {
            console.log("Can not connect to the DB" + err);
@@ -83,6 +86,104 @@ app.get('/', function(req, res) {
        })
    })
 });
+
+
+app.get('/admin', function(req, res) {
+  if (req.cookies.value == 'true') {
+      pool.connect(function (err, client, done) {
+       if (err) {
+           console.log("Can not connect to the DB" + err);
+       }
+       client.query('select * from lots, images where lots.lot_id = images.lot_id and images.ismain = true and lots.permiss = false;', function (err, result) {
+            done();
+            if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+            var catalog = result.rows;
+            var catalogJSON = JSON.stringify(catalog);
+            if (req.cookies.name == undefined) {
+              res.render('index', {catalogJSON : catalogJSON, info : '', money : '', value : '', main : true});
+            }
+            else {
+                res.render('index', {catalogJSON : catalogJSON, info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : false});
+            }
+       })
+   })
+  }
+  else res.redirect('/');
+});
+
+// -------------------------------------------------------------------------------------------------------
+
+
+// Вход, выход и регистрация в системе -------------------------------------------------------------------
+
+
+app.get('/out', function(req, res) {
+  res.clearCookie('name');
+  res.clearCookie('user_id');
+  res.clearCookie('cash');
+  res.clearCookie('value');
+  res.redirect('/');
+});
+
+app.get('/log', function(req, res) {
+  res.render('log', {mess : ''});
+});
+
+app.get('/sign', function(req, res) {
+  res.render('sign', {mess : ''});
+});
+
+
+app.post('/login', urlencodedParser, function(req, res) {
+  pool.connect(function (err, client, done) {
+    client.query('select * from users where users.login = $1 and users.pass = $2', [req.body.email, bcrypt.hashSync(req.body.password, process.env.SALT)], function (err, result) {
+
+        done()
+        if (result.rows.length == 0) {
+            res.render('log', {mess : 'Логин или пароль введены неверно'});
+        }
+        else {
+            res.cookie('user_id', result.rows[0].user_id, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            res.cookie('name', result.rows[0].name, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            res.cookie('cash', result.rows[0].cash, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            res.cookie('value', result.rows[0].admin, {expires: new Date(Date.now() + 3000000), httpOnly: true});
+            console.log(req.cookies);
+            res.redirect('/');
+        }
+    })
+  })
+});
+
+
+app.post('/signin', urlencodedParser, function(req, res) {
+  if ((req.body.password == req.body.password.match(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}/g)[0]) && (req.body.name == req.body.name.match(/[a-zA-Z]{1,}/g)[0])) {
+    pool.connect(function (err, client, done) {
+      client.query('select login from users where users.login = $1', [req.body.email], function (err, result) {
+        done()
+          if (result.rows.length == 0) {
+              client.query('INSERT INTO users(name, login, link, cash, pass, admin) VALUES($1, $2, $3, $4, $5, $6);', [req.body.name, req.body.email, req.body.link, 2500, bcrypt.hashSync(req.body.password, process.env.SALT), false], function (err, result) {
+                res.redirect('/');
+                  })
+          }
+          else {
+            res.render('sign', {mess : 'Пользователь с таким email уже существует'});
+          }
+      })
+    })
+  }
+  else {
+    res.render('sign', {mess : 'Неверный формат данных'});
+  }
+});
+
+
+// ------------------------------------------------------------------------------------------------------
+
+
+// Функционал опубликовки объявления --------------------------------------------------------------------
 
 
 app.get('/sell', function(req, res) {
@@ -115,138 +216,7 @@ app.get('/sell', function(req, res) {
   }
 });
 
-app.get('/out', function(req, res) {
-  res.clearCookie('name');
-  res.clearCookie('user_id');
-  res.clearCookie('cash');
-  res.clearCookie('value');
-  res.redirect('/');
-});
-
-app.get('/log', function(req, res) {
-  res.sendFile(__dirname + '/log.html');
-});
-
-app.post('/feedback', urlencodedParser, function(req, res) {
-  if (req.cookies.user_id == undefined) {
-    res.redirect('/sign');
-  }
-  else {
-  pool.connect(function (err, client, done) {
-    client.query('select max(reviews.review_id) from reviews;', function (err, result) {
-      max = result.rows[0].max + 1;
-                      client.query('INSERT INTO reviews(review_id, review, score, customer_id, permiss) VALUES($1, $2, $3, $4, $5);', [max, req.body.feedback, req.body.score, req.cookies.user_id, true], function (err, result) {
-                          client.query('INSERT INTO users_reviews(user_id, review_id) VALUES($1, $2);', [req.body.user_id, max], function (err, result) {
-                              done();
-                              res.redirect('/');
-                          })
-                      })
-                })
-
-    })
-  }
-});
-
-
-app.get('/admin', function(req, res) {
-  if (req.cookies.value == 'true') {
-      pool.connect(function (err, client, done) {
-       if (err) {
-           console.log("Can not connect to the DB" + err);
-       }
-       client.query('select * from lots, images where lots.lot_id = images.lot_id and images.ismain = true and lots.permiss = false;', function (err, result) {
-            done();
-            if (err) {
-                console.log(err);
-                res.status(400).send(err);
-            }
-            var catalog = result.rows;
-            var catalogJSON = JSON.stringify(catalog);
-            if (req.cookies.name == undefined) {
-              res.render('index', {catalogJSON : catalogJSON, info : '', money : '', value : '', main : true});
-            }
-            else {
-                res.render('index', {catalogJSON : catalogJSON, info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : false});
-            }
-       })
-   })
-  }
-  else res.redirect('/');
-});
-
-app.get('/ok/:id', function(req, res) {
-  pool.connect(function (err, client, done) {
-    client.query('UPDATE lots SET permiss = $1 WHERE lot_id = $2', [true, Number(req.params.id)], function (err, result) {
-      if (err) {
-                console.log(err);
-                res.status(400).send(err);
-            }
-      done()
-        res.redirect('/admin');
-    })
-  })
-});
-
-app.get('/no/:id', function(req, res) {
-  pool.connect(function (err, client, done) {
-    client.query('DELETE FROM lots WHERE lot_id = $1;', [Number(req.params.id)], function (err, result) {
-      done()
-        res.redirect('/admin');
-    })
-  })
-});
-
-
-app.post('/login', urlencodedParser, function(req, res) {
-  pool.connect(function (err, client, done) {
-    client.query('select * from users where users.login = $1 and users.pass = $2', [req.body.email, bcrypt.hashSync(req.body.password, process.env.SALT)], function (err, result) {
-
-        done()
-        if (result.rows.length == 0) {
-            res.sendFile(__dirname + '/log.html');
-        }
-        else {
-            res.cookie('user_id', result.rows[0].user_id, {expires: new Date(Date.now() + 3000000), httpOnly: true});
-            res.cookie('name', result.rows[0].name, {expires: new Date(Date.now() + 3000000), httpOnly: true});
-            res.cookie('cash', result.rows[0].cash, {expires: new Date(Date.now() + 3000000), httpOnly: true});
-            res.cookie('value', result.rows[0].admin, {expires: new Date(Date.now() + 3000000), httpOnly: true});
-            console.log(req.cookies);
-            res.redirect('/');
-        }
-    })
-  })
-});
-
-app.post('/signin', urlencodedParser, function(req, res) {
-  pool.connect(function (err, client, done) {
-    client.query('select login from users where users.login = $1', [req.body.email], function (err, result) {
-      done()
-        if (result.rows.length == 0) {
-            client.query('INSERT INTO users(name, login, link, cash, pass, admin) VALUES($1, $2, $3, $4, $5, $6);', [req.body.name, req.body.email, req.body.link, 2500, bcrypt.hashSync(req.body.password, process.env.SALT), false], function (err, result) {
-              res.redirect('/');
-                })
-        }
-        else {
-          res.sendFile(__dirname + '/sign.html');
-        }
-    })
-  })
-});
-
-app.get('/sign', function(req, res) {
-  res.sendFile(__dirname + '/sign.html');
-});
-
-app.post('/filter', urlencodedParser, function (req, res) {
-	console.log(req.body);
-	res.redirect('/');
-})
-
 app.post('/place', urlencodedParser, function (req, res) {
-
-
-
-
   var main = true;
   var max = 0;
   var number = 0;
@@ -257,9 +227,6 @@ app.post('/place', urlencodedParser, function (req, res) {
    else {
     var gender = true;
    }
-
-   console.log('гдеееееее');
-   console.log(req.files.basePhoto);
 
    pool.connect(function (err, client, done) {
     client.query('BEGIN', function (err, result) {
@@ -308,28 +275,18 @@ app.post('/place', urlencodedParser, function (req, res) {
         })
      })
   })
-
 })
 
 
-/*app.post('/update/:id', urlencodedParser, function (req, res) {
-  pusher.trigger('my-channel', 'my-event', {
-  "message": req.body.Price
-  });
+// -----------------------------------------------------------------------------------------------------
 
-  pool.connect(function (err, client, done) {
-       client.query('update lots set price = price + $1 where lot_id = $2;', [Number(req.body.Price), Number(req.params.id)], function (err, result) {
-      done()
-            res.redirect('/auction/' + req.params.id);
-       })
-   })
-})*/
+
+// Получение информации о лоте и продавце --------------------------------------------------------------
 
 
 app.get('/auction/:id', function(req, res) {
   pool.connect(function (err, client, done) {
        client.query('select lots.lot_id, users.name, users.link, lots.user_id, lots.comment, lots.time, lots.price, lots.gender, lots.model, images.img_id, brands.brand, cities.city, categories.category, globals.global, sizes.size, conditions.condition from lots, users, images, brands, cities, categories, globals, sizes, conditions where lots.lot_id = images.lot_id  and lots.lot_id = $1 and lots.brand_id = brands.brand_id and lots.city_id = cities.city_id and lots.category_id = categories.category_id and categories.global_id = globals.global_id and lots.size_id = sizes.size_id and lots.condition_id = conditions.condition_id and lots.user_id = users.user_id;', [Number(req.params.id)], function (err, result) {
-      //done()
       shmot = result.rows;
         client.query('select reviews.review, users.name, reviews.score from reviews, users, users_reviews where users_reviews.user_id = $1 and users_reviews.review_id = reviews.review_id and reviews.customer_id = users.user_id', [shmot[0].user_id], function (err, result) {
           done()
@@ -346,6 +303,54 @@ app.get('/auction/:id', function(req, res) {
 });
 
 
+app.post('/feedback', urlencodedParser, function(req, res) {
+  if (req.cookies.user_id == undefined) {
+    res.redirect('/sign');
+  }
+  else {
+  pool.connect(function (err, client, done) {
+    client.query('select max(reviews.review_id) from reviews;', function (err, result) {
+      max = result.rows[0].max + 1;
+                      client.query('INSERT INTO reviews(review_id, review, score, customer_id, permiss) VALUES($1, $2, $3, $4, $5);', [max, req.body.feedback, req.body.score, req.cookies.user_id, true], function (err, result) {
+                          client.query('INSERT INTO users_reviews(user_id, review_id) VALUES($1, $2);', [req.body.user_id, max], function (err, result) {
+                              done();
+                              res.redirect('/');
+                          })
+                      })
+                })
+    })
+  }
+});
+
+
+// ----------------------------------------------------------------------------------------------------
+
+
+// Обработка объявлений админом -----------------------------------------------------------------------
+
+app.get('/ok/:id', function(req, res) {
+  pool.connect(function (err, client, done) {
+    client.query('UPDATE lots SET permiss = $1 WHERE lot_id = $2', [true, Number(req.params.id)], function (err, result) {
+      if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+      done()
+        res.redirect('/admin');
+    })
+  })
+});
+
+app.get('/no/:id', function(req, res) {
+  pool.connect(function (err, client, done) {
+    client.query('DELETE FROM lots WHERE lot_id = $1;', [Number(req.params.id)], function (err, result) {
+      done()
+        res.redirect('/admin');
+    })
+  })
+});
+
+// --------------------------------------------------------------------------------------------------
 
 
 app.listen(process.env.PORT);
