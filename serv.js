@@ -38,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auction/:id/',express.static(__dirname + '/public'));
 app.use('/ok/:id/',express.static(__dirname + '/public'));
 app.use('/no/:id/',express.static(__dirname + '/public'));
+app.use('/filter/:id/',express.static(__dirname + '/public'));
 
 app.use(upload());
 
@@ -112,6 +113,33 @@ app.get('/admin', function(req, res) {
    })
   }
   else res.redirect('/');
+});
+
+app.get('/filter/:id', function(req, res) {
+  if (Number(req.params.id) == 0) {
+    var gender = true;
+  }
+  else {
+    var gender = false;
+  }
+  pool.connect(function (err, client, done) {
+       if (err) {
+           console.log("Can not connect to the DB" + err);
+       }
+       client.query('select lots.lot_id, images.img_id, images.img_name, lots.model, lots.price, brands.brand from lots, images, brands where lots.lot_id = images.lot_id and images.ismain = true and lots.permiss = true and lots.brand_id = brands.brand_id and lots.gender = $1;', [gender], function (err, result) {
+            done();
+            if (err) {
+                console.log(err);
+                res.status(400).send(err);
+            }
+            if (req.cookies.name == undefined) {
+              res.render('index', {catalogJSON : JSON.stringify(result.rows), info : '', money : '', value : '', main : true});
+            }
+            else {
+                res.render('index', {catalogJSON : JSON.stringify(result.rows), info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : true});
+            }
+       })
+   })
 });
 
 // -------------------------------------------------------------------------------------------------------
