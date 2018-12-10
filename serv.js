@@ -72,7 +72,12 @@ app.get('/', function(req, res) {
        if (err) {
            console.log("Can not connect to the DB" + err);
        }
-       client.query('select lots.lot_id, images.img_id, images.img_name, lots.model, lots.price, brands.brand from lots, images, brands where lots.lot_id = images.lot_id and images.ismain = true and lots.permiss = true and lots.brand_id = brands.brand_id;', function (err, result) {
+       client.query('select lots.lot_id, images.img_id, images.img_name, lots.model, lots.price, brands.brand ' +
+                    'from lots, images, brands ' +
+                    'where lots.lot_id = images.lot_id ' +
+                    'and images.ismain = true ' +
+                    'and lots.permiss = true ' +
+                    'and lots.brand_id = brands.brand_id;', function (err, result) {
             done();
             if (err) {
                 console.log(err);
@@ -126,7 +131,13 @@ app.get('/filter/:id', function(req, res) {
        if (err) {
            console.log("Can not connect to the DB" + err);
        }
-       client.query('select lots.lot_id, images.img_id, images.img_name, lots.model, lots.price, brands.brand from lots, images, brands where lots.lot_id = images.lot_id and images.ismain = true and lots.permiss = true and lots.brand_id = brands.brand_id and lots.gender = $1;', [gender], function (err, result) {
+       client.query('select lots.lot_id, images.img_id, images.img_name, lots.model, lots.price, brands.brand ' + 
+                    'from lots, images, brands ' +
+                    'where lots.lot_id = images.lot_id ' +
+                    'and images.ismain = true ' +
+                    'and lots.permiss = true ' +
+                    'and lots.brand_id = brands.brand_id ' +
+                    'and lots.gender = $1;', [gender], function (err, result) {
             done();
             if (err) {
                 console.log(err);
@@ -270,7 +281,8 @@ app.post('/place', urlencodedParser, function (req, res) {
                   fs.writeFileSync("public/image" + Number(max + i) + ".jpg", req.files.basePhoto[i].data);
                 }
               }
-              client.query('INSERT INTO lots(lot_id, user_id, brand_id, comment, time, price, gender, category_id, city_id, size_id, condition_id, permiss, model) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);', 
+              client.query('INSERT INTO lots(lot_id, user_id, brand_id, comment, time, price, gender, category_id, city_id, size_id, condition_id, permiss, model) ' +
+                            'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);', 
                         [counter, req.cookies.user_id, req.body.brand, req.body.description, 333, Number(req.body.price), gender, req.body.category, req.body.city, req.body.size, req.body.condition, false, req.body.model], 
                             function (err, result) {
                               if (err) {
@@ -314,9 +326,25 @@ app.post('/place', urlencodedParser, function (req, res) {
 
 app.get('/auction/:id', function(req, res) {
   pool.connect(function (err, client, done) {
-       client.query('select lots.lot_id, users.name, users.link, lots.user_id, lots.comment, lots.time, lots.price, lots.gender, lots.model, images.img_id, brands.brand, cities.city, categories.category, globals.global, sizes.size, conditions.condition from lots, users, images, brands, cities, categories, globals, sizes, conditions where lots.lot_id = images.lot_id  and lots.lot_id = $1 and lots.brand_id = brands.brand_id and lots.city_id = cities.city_id and lots.category_id = categories.category_id and categories.global_id = globals.global_id and lots.size_id = sizes.size_id and lots.condition_id = conditions.condition_id and lots.user_id = users.user_id;', [Number(req.params.id)], function (err, result) {
-      shmot = result.rows;
-        client.query('select reviews.review, users.name, reviews.score from reviews, users, users_reviews where users_reviews.user_id = $1 and users_reviews.review_id = reviews.review_id and reviews.customer_id = users.user_id', [shmot[0].user_id], function (err, result) {
+       client.query('select lots.lot_id, users.name, users.link, lots.user_id, lots.comment, lots.time, lots.price, lots.gender, ' +
+                    'lots.model, images.img_id, brands.brand, cities.city, categories.category, globals.global, sizes.size, conditions.condition ' +
+                    'from lots, users, images, brands, cities, categories, globals, sizes, conditions ' +
+                    'where lots.lot_id = images.lot_id ' + 
+                    'and lots.lot_id = $1 ' +
+                    'and lots.brand_id = brands.brand_id ' +
+                    'and lots.city_id = cities.city_id ' +
+                    'and lots.category_id = categories.category_id ' +
+                    'and categories.global_id = globals.global_id ' +
+                    'and lots.size_id = sizes.size_id ' +
+                    'and lots.condition_id = conditions.condition_id ' +
+                    'and lots.user_id = users.user_id;', [Number(req.params.id)], function (err, result) {
+                    shmot = result.rows;
+                    
+                      client.query('select reviews.review, users.name, reviews.score ' +
+                                    'from reviews, users, users_reviews ' +
+                                    'where users_reviews.user_id = $1 ' +
+                                    'and users_reviews.review_id = reviews.review_id ' +
+                                    'and reviews.customer_id = users.user_id', [shmot[0].user_id], function (err, result) {
           done()
             if (req.cookies.name == undefined) {
               res.render('auction', {shmot : shmot, info : '', money : '', fback : result.rows});
