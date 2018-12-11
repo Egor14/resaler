@@ -18,12 +18,12 @@
 	  	<h5>Аккаунт: <%= info %></h5>
 	  </div>
 	  <div class="col-md-4">
-		<form class="form-inline" >
+		<!-- <form class="form-inline" >
 			<div class="form-group" style="width: 150px">
 			    <input type="text" class="form-control" id="search" placeholder="Поиск">
 			</div>
 			  <button type="submit" class="btn btn-link"><img src="https://raw.githubusercontent.com/Egor14/resaler/master/public/search.png" style="width: 30px; height: 30px;"></button>
-		</form>
+		</form> -->
 		<br>
 		<!-- <h5>Денег на счете: <%= money %></h5> -->
 	  </div>
@@ -85,8 +85,11 @@
 
     <hr>
     <div class="row category">
-	  <div class="col-md-6"><a href="/filter/1"><h5>МУЖСКОЕ</h5></a></div>
-	  <div class="col-md-6"><a href="/filter/0"><h5>ЖЕНСКОЕ</h5></a></div>
+	  <div class="col-md-4"><a href="/filter/1"><h5>МУЖСКОЕ</h5></a></div>
+	  <div class="col-md-4"><a href="/filter/0"><h5>ЖЕНСКОЕ</h5></a></div>
+	  <% if (info != '') { %>
+	  	<div class="col-md-4"><a href="/filter/my"><h5>Мои объявления</h5></a></div>
+	  			<% } %>
     </div>
 
 	  	<% catalog = JSON.parse(catalogJSON); %> 
@@ -122,6 +125,17 @@
 	  					<button type="submit" class="btn btn-success but">Одобрить</button>
 	  	
 	  				</form>
+
+	  				<form action="/no/<%= catalog[i].lot_id %>" method="get">
+
+	  
+	  					<button type="submit" class="btn btn-outline-danger but">Удалить</button>
+
+	  				</form>
+
+	 			<% } %>
+
+	 			<% if (main == 'my') { %>
 
 	  				<form action="/no/<%= catalog[i].lot_id %>" method="get">
 

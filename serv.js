@@ -121,36 +121,64 @@ app.get('/admin', function(req, res) {
 });
 
 app.get('/filter/:id', function(req, res) {
-  if (Number(req.params.id) == 0) {
-    var gender = true;
+  if (req.params.id != 'my') {
+    if (Number(req.params.id) == 0) {
+      var gender = true;
+    }
+    else {
+      var gender = false;
+    }
+    pool.connect(function (err, client, done) {
+         if (err) {
+             console.log("Can not connect to the DB" + err);
+         }
+         client.query('select lots.lot_id, images.img_id, images.img_name, lots.model, lots.price, brands.brand ' + 
+                      'from lots, images, brands ' +
+                      'where lots.lot_id = images.lot_id ' +
+                      'and images.ismain = true ' +
+                      'and lots.permiss = true ' +
+                      'and lots.brand_id = brands.brand_id ' +
+                      'and lots.gender = $1;', [gender], function (err, result) {
+              done();
+              if (err) {
+                  console.log(err);
+                  res.status(400).send(err);
+              }
+              if (req.cookies.name == undefined) {
+                res.render('index', {catalogJSON : JSON.stringify(result.rows), info : '', money : '', value : '', main : true});
+              }
+              else {
+                  res.render('index', {catalogJSON : JSON.stringify(result.rows), info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : true});
+              }
+         })
+     })
   }
   else {
-    var gender = false;
+    pool.connect(function (err, client, done) {
+         if (err) {
+             console.log("Can not connect to the DB" + err);
+         }
+         client.query('select lots.lot_id, images.img_id, images.img_name, lots.model, lots.price, brands.brand ' + 
+                      'from lots, images, brands ' +
+                      'where lots.lot_id = images.lot_id ' +
+                      'and images.ismain = true ' +
+                      'and lots.permiss = true ' +
+                      'and lots.brand_id = brands.brand_id ' +
+                      'and lots.user_id = $1;', [req.cookies.user_id], function (err, result) {
+              done();
+              if (err) {
+                  console.log(err);
+                  res.status(400).send(err);
+              }
+              if (req.cookies.name == undefined) {
+                res.render('index', {catalogJSON : JSON.stringify(result.rows), info : '', money : '', value : '', main : true});
+              }
+              else {
+                  res.render('index', {catalogJSON : JSON.stringify(result.rows), info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : 'my'});
+              }
+         })
+     })
   }
-  pool.connect(function (err, client, done) {
-       if (err) {
-           console.log("Can not connect to the DB" + err);
-       }
-       client.query('select lots.lot_id, images.img_id, images.img_name, lots.model, lots.price, brands.brand ' + 
-                    'from lots, images, brands ' +
-                    'where lots.lot_id = images.lot_id ' +
-                    'and images.ismain = true ' +
-                    'and lots.permiss = true ' +
-                    'and lots.brand_id = brands.brand_id ' +
-                    'and lots.gender = $1;', [gender], function (err, result) {
-            done();
-            if (err) {
-                console.log(err);
-                res.status(400).send(err);
-            }
-            if (req.cookies.name == undefined) {
-              res.render('index', {catalogJSON : JSON.stringify(result.rows), info : '', money : '', value : '', main : true});
-            }
-            else {
-                res.render('index', {catalogJSON : JSON.stringify(result.rows), info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : true});
-            }
-       })
-   })
 });
 
 // -------------------------------------------------------------------------------------------------------
@@ -189,7 +217,7 @@ app.post('/login', urlencodedParser, function(req, res) {
             res.cookie('name', result.rows[0].name, {expires: new Date(Date.now() + 3000000), httpOnly: true});
             res.cookie('cash', result.rows[0].cash, {expires: new Date(Date.now() + 3000000), httpOnly: true});
             res.cookie('value', result.rows[0].admin, {expires: new Date(Date.now() + 3000000), httpOnly: true});
-            console.log(req.cookies);
+            //console.log(req.cookies);
             res.redirect('/');
         }
     })
