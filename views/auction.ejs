@@ -144,7 +144,22 @@
 
 
           <h3>
-              Продавец: <%= shmot[0].name  %>
+              Продавец: <%= shmot[0].name  %><br>
+                             <% score = 0; %>
+                                <% for (i=0; i<fback.length; i++) { %>
+                                  <% score += fback[i].score; %>
+                                <% } %>
+                              <% score = Math.round(score/fback.length * 10)/10; %>
+                              <% if (score >= 4) { %>
+                                  Средняя оценка: <span style="color: green;"><%= score; %></span>
+                              <% } %>
+                              <% if (score >= 3.5 && score < 4) { %>
+                                  Средняя оценка: <span style="color: orange;"><%= score; %></span>
+                              <% } %>
+                              <% if (score < 3.5) { %>
+                                  Средняя оценка: <span style="color: red;"><%= score; %></span>
+                              <% } %>
+                              
           </h3>
           <a href="<%= shmot[0].link %>"><button class="btn btn-primary">Договориться о покупке</button></a>
           <br>

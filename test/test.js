@@ -55,10 +55,13 @@ describe('Тесты', function(){
             .type('form')
             .field('email', 'egor@mail.ru')
             .field('password', 'qazzaq')
-            .redirects(1)
+            //.redirects(1)
             .expect(200)
             .end(function(err, res){
-                res.status.should.equal(200);
+                //console.log(res.header)
+
+                //res.status.should.equal(200);
+                res.header['location'].should.equal('/');
                 done();
             });
 
@@ -86,6 +89,7 @@ describe('Тесты', function(){
             .field('password', 'qazza')
             .expect(200)
             .end(function(err, res){
+                //console.log(res)
                 res.status.should.equal(200);
                 done();
             });
@@ -99,9 +103,10 @@ describe('Тесты', function(){
             .field('name', 'adasd')
             .field('link', 'qazza')
             .field('email', 'egor@mail.ru')
-            .field('password', 'qazza')
+            .field('password', '123456Zz')
             .expect(200)
             .end(function(err, res){
+                //console.log(res.header)
                 res.status.should.equal(200);
                 done();
             });
