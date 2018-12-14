@@ -6,7 +6,7 @@ var should = require('should'),
 describe('Тесты', function(){
 
     it('Проверка подключения к БД', function(done){
-        supertest('http://localhost:3000')
+        supertest('https://resaler.herokuapp.com')
             .get('/isDbConnected')
             .expect(200)
             .end(function(err, res){
@@ -55,12 +55,8 @@ describe('Тесты', function(){
             .type('form')
             .field('email', 'egor@mail.ru')
             .field('password', 'qazzaq')
-            //.redirects(1)
             .expect(200)
             .end(function(err, res){
-                //console.log(res.header)
-
-                //res.status.should.equal(200);
                 res.header['location'].should.equal('/');
                 done();
             });
@@ -89,7 +85,6 @@ describe('Тесты', function(){
             .field('password', 'qazza')
             .expect(200)
             .end(function(err, res){
-                //console.log(res)
                 res.status.should.equal(200);
                 done();
             });
@@ -106,8 +101,21 @@ describe('Тесты', function(){
             .field('password', '123456Zz')
             .expect(200)
             .end(function(err, res){
-                //console.log(res.header)
                 res.status.should.equal(200);
+                done();
+            });
+
+    });
+
+    it('Вход в систему c верным логином и паролем', function(done){
+        supertest('https://resaler.herokuapp.com')
+            .post('/login')
+            .type('form')
+            .field('email', 'egor@mail.ru')
+            .field('password', 'qazzaq')
+            .expect(200)
+            .end(function(err, res){
+                res.header['location'].should.equal('/');
                 done();
             });
 

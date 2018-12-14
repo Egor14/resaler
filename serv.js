@@ -154,6 +154,10 @@ app.get('/filter/:id', function(req, res) {
      })
   }
   else {
+    if (req.cookies.name == undefined) {
+                res.redirect('/');
+              }
+    else {
     pool.connect(function (err, client, done) {
          if (err) {
              console.log("Can not connect to the DB" + err);
@@ -170,14 +174,11 @@ app.get('/filter/:id', function(req, res) {
                   console.log(err);
                   res.status(400).send(err);
               }
-              if (req.cookies.name == undefined) {
-                res.render('index', {catalogJSON : JSON.stringify(result.rows), info : '', money : '', value : '', main : true});
-              }
-              else {
                   res.render('index', {catalogJSON : JSON.stringify(result.rows), info : req.cookies.name, money : req.cookies.cash, value : req.cookies.value, main : 'my'});
-              }
+              
          })
      })
+  }
   }
 });
 
